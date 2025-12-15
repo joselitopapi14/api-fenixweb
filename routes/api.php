@@ -44,7 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Users Resource
-    Route::apiResource('users', UserController::class);
+    Route::apiResource('users', UserController::class)->middleware('permission:users.view|users.create|users.edit|users.delete');
 
     // --- Core Data Endpoints ---
 
@@ -84,7 +84,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // --- Facturacion API ---
     
-    Route::post('/facturas', [ApiFacturaController::class, 'store']);
+    Route::post('/facturas', [ApiFacturaController::class, 'store'])
+        ->middleware('permission:registros.create');
 
     Route::get('/tipos-factura', function() {
         return TipoFactura::select('id', 'name')->get()->map(function($tipo) {

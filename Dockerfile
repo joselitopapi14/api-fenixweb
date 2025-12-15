@@ -24,7 +24,10 @@ RUN composer install \
 # ==========================================
 # Stage 2: Final Production Image
 # ==========================================
-FROM php:8.5-fpm-alpine as final
+# ==========================================
+# Stage 2: Final Production Image
+# ==========================================
+FROM php:8.5-rc-fpm-alpine as final
 
 # Set working directory
 WORKDIR /var/www/html
@@ -57,7 +60,7 @@ RUN set -ex \
     libpng-dev \
     libjpeg-turbo-dev \
     freetype-dev \
-    postgresql-dev \
+    libpq-dev \
     linux-headers \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-configure zip \
