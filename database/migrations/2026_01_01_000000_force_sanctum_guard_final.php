@@ -17,11 +17,11 @@ return new class extends Migration
         DB::table('roles')->update(['guard_name' => 'sanctum']);
         DB::table('permissions')->update(['guard_name' => 'sanctum']);
         
-        if (Schema::hasTable('model_has_roles')) {
+        if (Schema::hasColumn('model_has_roles', 'guard_name')) {
             DB::table('model_has_roles')->update(['guard_name' => 'sanctum']);
         }
         
-        if (Schema::hasTable('model_has_permissions')) {
+        if (Schema::hasColumn('model_has_permissions', 'guard_name')) {
             DB::table('model_has_permissions')->update(['guard_name' => 'sanctum']);
         }
         
