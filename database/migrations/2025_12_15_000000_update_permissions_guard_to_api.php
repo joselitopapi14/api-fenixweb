@@ -12,15 +12,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Actualizar roles
+        // Actualizar roles a sanctum
         DB::table('roles')
-            ->where('guard_name', 'web')
-            ->update(['guard_name' => 'api']);
+            ->whereIn('guard_name', ['web', 'api'])
+            ->update(['guard_name' => 'sanctum']);
 
-        // Actualizar permisos
+        // Actualizar permisos a sanctum
         DB::table('permissions')
-            ->where('guard_name', 'web')
-            ->update(['guard_name' => 'api']);
+            ->whereIn('guard_name', ['web', 'api'])
+            ->update(['guard_name' => 'sanctum']);
     }
 
     /**
