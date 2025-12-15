@@ -64,6 +64,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Users Resource
     // La autorización se maneja en el controlador
     Route::apiResource('users', UserController::class);
+    
+    // Roles & Permissions Resource
+    Route::apiResource('roles', \App\Http\Controllers\Api\RoleController::class);
+    Route::get('/permissions', [\App\Http\Controllers\Api\RoleController::class, 'allPermissions']);
 
     // --- Core Data Endpoints ---
 
