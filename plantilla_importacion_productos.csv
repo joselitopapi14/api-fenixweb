@@ -1,0 +1,6 @@
+ID,Nombre,Descripción,Código de Barras,Tipo de Producto,Tipo de Oro,Precio de Venta,Precio de Compra,Empresa,Fecha de Creación,Última Actualización
+,"Anillo de Oro 18K Clásico","Anillo elegante de oro de 18 kilates con diseño clásico atemporal","12345678901234","Joyería","Oro 18K","$250.000,00","$200.000,00","Global",,
+,"Cadena de Plata 925","Cadena de plata 925 con eslabones tradicionales, 50cm de largo","12345678901235","Joyería",,"$80.000,00","$60.000,00","Global",,
+,"Producto Sin Tipo","Producto que usará el tipo por defecto (ID 2)","12345678901236",,,"$50.000,00","$40.000,00","Global",,
+,"Lingote de Oro 1oz","Lingote de oro puro 999.9 de una onza para inversión","12345678901237","Inversión","Oro Puro","$2.500.000,00","$2.400.000,00","Global",,
+,"Reloj de Oro Amarillo","Reloj de lujo con caja de oro amarillo de 14 kilates","12345678901238","Relojería","Oro 14K","$1.200.000,00","$1.000.000,00","Global",,

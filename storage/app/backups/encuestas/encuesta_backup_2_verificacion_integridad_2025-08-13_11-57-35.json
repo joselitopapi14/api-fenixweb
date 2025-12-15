@@ -1,0 +1,53 @@
+{
+    "timestamp": "2025-08-13T16:57:35.063627Z",
+    "operacion": "verificacion_integridad",
+    "user_id": null,
+    "encuesta": {
+        "id": 2,
+        "titulo": "Consulta Popular - Elección de Líder Comunal",
+        "descripcion": "Consulta para elegir al representante de la comunidad para el período 2024-2026.",
+        "activa": true,
+        "fecha_inicio": "2025-07-25T05:00:00.000000Z",
+        "fecha_fin": "2025-08-24T05:00:00.000000Z",
+        "permite_multiples_respuestas": false,
+        "created_at": "2025-08-09T21:23:47.000000Z",
+        "updated_at": "2025-08-09T21:23:47.000000Z",
+        "preguntas": [
+            {
+                "id": 5,
+                "encuesta_id": 2,
+                "pregunta": "¿Qué candidato prefiere para representar su comunidad?",
+                "tipo": "candidatos",
+                "orden": 1,
+                "obligatoria": true,
+                "created_at": "2025-08-09T21:23:47.000000Z",
+                "updated_at": "2025-08-09T21:23:47.000000Z",
+                "opciones": [
+                    {
+                        "id": 9,
+                        "pregunta_id": 5,
+                        "texto": "Sergio Fajardo",
+                        "candidato_id": 1,
+                        "orden": 1,
+                        "created_at": "2025-08-09T21:23:47.000000Z",
+                        "updated_at": "2025-08-09T21:23:47.000000Z",
+                        "candidato": {
+                            "id": 1,
+                            "nombre": "Sergio Fajardo",
+                            "tipo_votacion_id": 3,
+                            "foto": "candidatos\/1754685831_689661871d079.jpeg",
+                            "created_at": "2025-08-08T20:43:51.000000Z",
+                            "updated_at": "2025-08-08T20:43:51.000000Z"
+                        }
+                    }
+                ]
+            }
+        ],
+        "respuestas": []
+    },
+    "metadata": {
+        "total_preguntas": 1,
+        "total_respuestas": 0,
+        "total_respuestas_unicas": 0
+    }
+}

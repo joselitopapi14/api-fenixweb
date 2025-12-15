@@ -1,0 +1,157 @@
+{
+    "timestamp": "2025-08-13T16:57:35.087000Z",
+    "operacion": "verificacion_integridad",
+    "user_id": null,
+    "encuesta": {
+        "id": 4,
+        "titulo": "Evaluación Integral de Servicios",
+        "descripcion": "Encuesta comprehensiva que evalúa múltiples aspectos de los servicios municipales.",
+        "activa": true,
+        "fecha_inicio": "2025-08-04T05:00:00.000000Z",
+        "fecha_fin": null,
+        "permite_multiples_respuestas": true,
+        "created_at": "2025-08-09T21:23:47.000000Z",
+        "updated_at": "2025-08-09T21:23:47.000000Z",
+        "preguntas": [
+            {
+                "id": 8,
+                "encuesta_id": 4,
+                "pregunta": "¿Ha utilizado los servicios digitales del municipio?",
+                "tipo": "si_no",
+                "orden": 1,
+                "obligatoria": true,
+                "created_at": "2025-08-09T21:23:47.000000Z",
+                "updated_at": "2025-08-09T21:23:47.000000Z",
+                "opciones": [
+                    {
+                        "id": 20,
+                        "pregunta_id": 8,
+                        "texto": "Sí",
+                        "candidato_id": null,
+                        "orden": 1,
+                        "created_at": "2025-08-09T21:23:47.000000Z",
+                        "updated_at": "2025-08-09T21:23:47.000000Z",
+                        "candidato": null
+                    },
+                    {
+                        "id": 21,
+                        "pregunta_id": 8,
+                        "texto": "No",
+                        "candidato_id": null,
+                        "orden": 2,
+                        "created_at": "2025-08-09T21:23:47.000000Z",
+                        "updated_at": "2025-08-09T21:23:47.000000Z",
+                        "candidato": null
+                    }
+                ]
+            },
+            {
+                "id": 9,
+                "encuesta_id": 4,
+                "pregunta": "¿Qué candidato considera más preparado para liderar proyectos comunitarios?",
+                "tipo": "candidatos",
+                "orden": 2,
+                "obligatoria": false,
+                "created_at": "2025-08-09T21:23:47.000000Z",
+                "updated_at": "2025-08-09T21:23:47.000000Z",
+                "opciones": [
+                    {
+                        "id": 22,
+                        "pregunta_id": 9,
+                        "texto": "Sergio Fajardo",
+                        "candidato_id": 1,
+                        "orden": 1,
+                        "created_at": "2025-08-09T21:23:47.000000Z",
+                        "updated_at": "2025-08-09T21:23:47.000000Z",
+                        "candidato": {
+                            "id": 1,
+                            "nombre": "Sergio Fajardo",
+                            "tipo_votacion_id": 3,
+                            "foto": "candidatos\/1754685831_689661871d079.jpeg",
+                            "created_at": "2025-08-08T20:43:51.000000Z",
+                            "updated_at": "2025-08-08T20:43:51.000000Z"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 10,
+                "encuesta_id": 4,
+                "pregunta": "¿Cuál es su principal medio de comunicación con el municipio?",
+                "tipo": "opciones_personalizadas",
+                "orden": 3,
+                "obligatoria": true,
+                "created_at": "2025-08-09T21:23:47.000000Z",
+                "updated_at": "2025-08-09T21:23:47.000000Z",
+                "opciones": [
+                    {
+                        "id": 23,
+                        "pregunta_id": 10,
+                        "texto": "Visita presencial",
+                        "candidato_id": null,
+                        "orden": 1,
+                        "created_at": "2025-08-09T21:23:47.000000Z",
+                        "updated_at": "2025-08-09T21:23:47.000000Z",
+                        "candidato": null
+                    },
+                    {
+                        "id": 24,
+                        "pregunta_id": 10,
+                        "texto": "Llamada telefónica",
+                        "candidato_id": null,
+                        "orden": 2,
+                        "created_at": "2025-08-09T21:23:47.000000Z",
+                        "updated_at": "2025-08-09T21:23:47.000000Z",
+                        "candidato": null
+                    },
+                    {
+                        "id": 25,
+                        "pregunta_id": 10,
+                        "texto": "Correo electrónico",
+                        "candidato_id": null,
+                        "orden": 3,
+                        "created_at": "2025-08-09T21:23:47.000000Z",
+                        "updated_at": "2025-08-09T21:23:47.000000Z",
+                        "candidato": null
+                    },
+                    {
+                        "id": 26,
+                        "pregunta_id": 10,
+                        "texto": "Redes sociales",
+                        "candidato_id": null,
+                        "orden": 4,
+                        "created_at": "2025-08-09T21:23:47.000000Z",
+                        "updated_at": "2025-08-09T21:23:47.000000Z",
+                        "candidato": null
+                    },
+                    {
+                        "id": 27,
+                        "pregunta_id": 10,
+                        "texto": "Página web municipal",
+                        "candidato_id": null,
+                        "orden": 5,
+                        "created_at": "2025-08-09T21:23:48.000000Z",
+                        "updated_at": "2025-08-09T21:23:48.000000Z",
+                        "candidato": null
+                    },
+                    {
+                        "id": 28,
+                        "pregunta_id": 10,
+                        "texto": "WhatsApp",
+                        "candidato_id": null,
+                        "orden": 6,
+                        "created_at": "2025-08-09T21:23:48.000000Z",
+                        "updated_at": "2025-08-09T21:23:48.000000Z",
+                        "candidato": null
+                    }
+                ]
+            }
+        ],
+        "respuestas": []
+    },
+    "metadata": {
+        "total_preguntas": 3,
+        "total_respuestas": 0,
+        "total_respuestas_unicas": 0
+    }
+}

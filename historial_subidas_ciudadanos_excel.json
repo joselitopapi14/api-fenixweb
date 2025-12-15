@@ -1,0 +1,192 @@
+{
+  "historial_subidas_ciudadanos_excel": {
+    "descripcion": "Sistema completo para capturar y gestionar el historial de subidas de archivos Excel de ciudadanos en el proyecto",
+    "tabla_principal": {
+      "nombre": "import_histories",
+      "descripcion": "Tabla que almacena todo el historial de importaciones de archivos Excel",
+      "campos": {
+        "id": "ID único de la importación",
+        "filename": "Nombre original del archivo Excel subido",
+        "stored_path": "Ruta donde se almacenó el archivo en storage/app/imports",
+        "user_id": "ID del usuario que realizó la subida (relación con tabla users)",
+        "total_rows": "Total de filas procesadas en el archivo",
+        "successful_imports": "Número de registros importados exitosamente",
+        "skipped_duplicates": "Número de registros omitidos por ser duplicados",
+        "failed_imports": "Número de registros que fallaron durante la importación",
+        "duplicate_cedulas": "Array JSON con las cédulas duplicadas encontradas",
+        "errors": "Array JSON con todos los errores ocurridos durante la importación",
+        "status": "Estado de la importación: 'completed', 'completed_with_errors', 'failed'",
+        "created_at": "Fecha y hora de la importación",
+        "updated_at": "Fecha de última actualización del registro"
+      }
+    },
+    "modelo_eloquent": {
+      "archivo": "app/Models/ImportHistory.php",
+      "descripcion": "Modelo Eloquent para interactuar con la tabla import_histories",
+      "caracteristicas": [
+        "Campos fillable para asignación masiva",
+        "Casts automáticos para arrays JSON (duplicate_cedulas, errors)",
+        "Casts para fechas (created_at, updated_at)",
+        "Relación belongsTo con el modelo User"
+      ]
+    },
+    "controladores_captura": {
+      "ciudadanos_generales": {
+        "archivo": "app/Http/Controllers/Web/DataUpload/DataUploadController.php",
+        "metodos": {
+          "index": "Muestra el listado del historial con paginación",
+          "store": "Procesa la subida y captura estadísticas completas",
+          "getFilteredHistory": "API para filtrar historial por estado y fechas",
+          "show": "Muestra detalles específicos de una importación",
+          "downloadFile": "Permite descargar el archivo original subido",
+          "downloadTemplate": "Descarga plantilla Excel para ciudadanos"
+        },
+        "validaciones": [
+          "Archivo requerido",
+          "Formatos: xlsx, xls, csv",
+          "Tamaño máximo: 10MB"
+        ]
+      },
+      "testigos": {
+        "archivo": "app/Http/Controllers/Web/DataUpload/TestigosUploadController.php",
+        "caracteristicas": [
+          "Mismo flujo que ciudadanos generales",
+          "Agrega campo 'type' = 'testigos' al historial",
+          "Usa TestigosImport para procesamiento específico"
+        ]
+      },
+      "jurados": {
+        "archivo": "app/Http/Controllers/Web/DataUpload/JuradosUploadController.php",
+        "caracteristicas": [
+          "Mismo flujo que ciudadanos generales",
+          "Usa JuradosImport para procesamiento específico",
+          "Sin campo type específico en el historial"
+        ]
+      }
+    },
+    "clases_importacion": {
+      "ciudadanos": {
+        "archivo": "app/Imports/CiudadanosImport.php",
+        "metodos_captura": {
+          "getImportStats": "Retorna estadísticas completas de la importación",
+          "onFailure": "Captura errores de validación",
+          "model": "Procesa cada fila y captura errores específicos"
+        },
+        "estadisticas_capturadas": [
+          "total_rows: Total de filas procesadas",
+          "successful_imports: Importaciones exitosas",
+          "skipped_duplicates: Duplicados omitidos",
+          "failed_imports: Importaciones fallidas",
+          "duplicate_cedulas: Array de cédulas duplicadas",
+          "errors: Array de errores detallados con número de fila"
+        ]
+      },
+      "testigos": {
+        "archivo": "app/Imports/TestigosImport.php",
+        "descripcion": "Importación específica para testigos con estadísticas similares"
+      },
+      "jurados": {
+        "archivo": "app/Imports/JuradosImport.php",
+        "descripcion": "Importación específica para jurados con estadísticas similares"
+      }
+    },
+    "flujo_captura_historial": {
+      "pasos": [
+        {
+          "paso": 1,
+          "descripcion": "Usuario sube archivo Excel",
+          "validacion": "Se valida formato, tamaño y requisitos del archivo"
+        },
+        {
+          "paso": 2,
+          "descripcion": "Archivo se almacena",
+          "ubicacion": "storage/app/imports con nombre único"
+        },
+        {
+          "paso": 3,
+          "descripcion": "Se ejecuta importación",
+          "proceso": "Laravel Excel procesa el archivo fila por fila"
+        },
+        {
+          "paso": 4,
+          "descripcion": "Se capturan estadísticas",
+          "datos": "Éxitos, errores, duplicados durante el procesamiento"
+        },
+        {
+          "paso": 5,
+          "descripcion": "Se determina estado final",
+          "estados": "'completed', 'completed_with_errors', 'failed'"
+        },
+        {
+          "paso": 6,
+          "descripcion": "Se guarda registro completo",
+          "tabla": "import_histories con todas las estadísticas"
+        }
+      ]
+    },
+    "rutas_acceso": {
+      "listado_historial": "GET /subida-datos - Muestra historial con paginación",
+      "subir_archivo": "POST /subida-datos - Procesa subida y captura historial",
+      "api_filtros": "GET /api/history - API para filtrar historial",
+      "detalle_importacion": "GET /history/{id} - Detalle específico de importación",
+      "descargar_archivo": "GET /download/{id} - Descarga archivo original",
+      "plantilla": "GET /download-template - Descarga plantilla Excel"
+    },
+    "vistas_historial": {
+      "ciudadanos": "resources/views/data-upload/index.blade.php",
+      "testigos": "resources/views/data-upload-testigos/index.blade.php",
+      "jurados": "resources/views/data-upload-jurados/index.blade.php"
+    },
+    "filtros_disponibles": {
+      "por_estado": [
+        "all - Todos los estados",
+        "completed - Solo importaciones exitosas",
+        "completed_with_errors - Con errores pero parcialmente exitosas",
+        "failed - Importaciones completamente fallidas"
+      ],
+      "por_fechas": "Rango de fechas de importación (date_range)",
+      "por_usuario": "Filtro implícito por usuario logueado (en algunos casos)"
+    },
+    "informacion_capturada": {
+      "archivo_original": {
+        "nombre": "Nombre exacto del archivo subido",
+        "ruta_almacenada": "Ubicación en storage para referencia futura",
+        "descarga": "Posibilidad de re-descargar archivo original"
+      },
+      "usuario": {
+        "quien_subio": "ID y datos del usuario que realizó la importación",
+        "timestamp": "Fecha y hora exacta de la subida"
+      },
+      "estadisticas_procesamiento": {
+        "filas_totales": "Total de filas en el archivo Excel",
+        "exitosas": "Filas procesadas sin errores",
+        "duplicadas": "Filas omitidas por cédulas duplicadas",
+        "fallidas": "Filas con errores de validación o procesamiento"
+      },
+      "errores_detallados": {
+        "por_fila": "Errores específicos con número de fila exacto",
+        "tipos_error": [
+          "Validaciones de formato",
+          "Departamentos/municipios no encontrados",
+          "Datos faltantes obligatorios",
+          "Errores de conversión de fechas"
+        ]
+      },
+      "duplicados": {
+        "cedulas": "Array completo de cédulas que ya existían",
+        "conteo": "Número total de duplicados encontrados"
+      }
+    },
+    "seguridad_y_permisos": {
+      "descarga_archivos": "Solo el usuario que subió el archivo o usuarios con permisos especiales pueden descargarlo",
+      "visualizacion": "Historial visible según permisos del usuario",
+      "almacenamiento": "Archivos se mantienen en storage para auditoría futura"
+    },
+    "migracion_base_datos": {
+      "archivo": "database/migrations/2025_08_21_154250_create_import_histories_table.php",
+      "descripcion": "Define estructura completa de la tabla import_histories",
+      "indices": "Clave foránea con tabla users",
+      "constraints": "Status como ENUM con valores específicos"
+    }
+  }
+}

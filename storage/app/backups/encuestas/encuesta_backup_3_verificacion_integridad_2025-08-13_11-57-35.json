@@ -1,0 +1,148 @@
+{
+    "timestamp": "2025-08-13T16:57:35.073566Z",
+    "operacion": "verificacion_integridad",
+    "user_id": null,
+    "encuesta": {
+        "id": 3,
+        "titulo": "Prioridades de Inversión Municipal 2025",
+        "descripcion": "Consulta para determinar las prioridades de inversión del presupuesto municipal.",
+        "activa": true,
+        "fecha_inicio": "2025-08-09T05:00:00.000000Z",
+        "fecha_fin": "2025-10-08T05:00:00.000000Z",
+        "permite_multiples_respuestas": false,
+        "created_at": "2025-08-09T21:23:47.000000Z",
+        "updated_at": "2025-08-09T21:23:47.000000Z",
+        "preguntas": [
+            {
+                "id": 6,
+                "encuesta_id": 3,
+                "pregunta": "¿Cuál considera la prioridad más importante para la inversión municipal?",
+                "tipo": "opciones_personalizadas",
+                "orden": 1,
+                "obligatoria": true,
+                "created_at": "2025-08-09T21:23:47.000000Z",
+                "updated_at": "2025-08-09T21:23:47.000000Z",
+                "opciones": [
+                    {
+                        "id": 10,
+                        "pregunta_id": 6,
+                        "texto": "Mejoramiento de vías y transporte",
+                        "candidato_id": null,
+                        "orden": 1,
+                        "created_at": "2025-08-09T21:23:47.000000Z",
+                        "updated_at": "2025-08-09T21:23:47.000000Z",
+                        "candidato": null
+                    },
+                    {
+                        "id": 11,
+                        "pregunta_id": 6,
+                        "texto": "Educación y bibliotecas",
+                        "candidato_id": null,
+                        "orden": 2,
+                        "created_at": "2025-08-09T21:23:47.000000Z",
+                        "updated_at": "2025-08-09T21:23:47.000000Z",
+                        "candidato": null
+                    },
+                    {
+                        "id": 12,
+                        "pregunta_id": 6,
+                        "texto": "Salud y centros médicos",
+                        "candidato_id": null,
+                        "orden": 3,
+                        "created_at": "2025-08-09T21:23:47.000000Z",
+                        "updated_at": "2025-08-09T21:23:47.000000Z",
+                        "candidato": null
+                    },
+                    {
+                        "id": 13,
+                        "pregunta_id": 6,
+                        "texto": "Seguridad y vigilancia",
+                        "candidato_id": null,
+                        "orden": 4,
+                        "created_at": "2025-08-09T21:23:47.000000Z",
+                        "updated_at": "2025-08-09T21:23:47.000000Z",
+                        "candidato": null
+                    },
+                    {
+                        "id": 14,
+                        "pregunta_id": 6,
+                        "texto": "Parques y espacios recreativos",
+                        "candidato_id": null,
+                        "orden": 5,
+                        "created_at": "2025-08-09T21:23:47.000000Z",
+                        "updated_at": "2025-08-09T21:23:47.000000Z",
+                        "candidato": null
+                    },
+                    {
+                        "id": 15,
+                        "pregunta_id": 6,
+                        "texto": "Servicios públicos (agua, luz)",
+                        "candidato_id": null,
+                        "orden": 6,
+                        "created_at": "2025-08-09T21:23:47.000000Z",
+                        "updated_at": "2025-08-09T21:23:47.000000Z",
+                        "candidato": null
+                    }
+                ]
+            },
+            {
+                "id": 7,
+                "encuesta_id": 3,
+                "pregunta": "¿En qué horario prefiere que se realicen las actividades comunitarias?",
+                "tipo": "opciones_personalizadas",
+                "orden": 2,
+                "obligatoria": true,
+                "created_at": "2025-08-09T21:23:47.000000Z",
+                "updated_at": "2025-08-09T21:23:47.000000Z",
+                "opciones": [
+                    {
+                        "id": 16,
+                        "pregunta_id": 7,
+                        "texto": "Mañana (6:00 AM - 12:00 PM)",
+                        "candidato_id": null,
+                        "orden": 1,
+                        "created_at": "2025-08-09T21:23:47.000000Z",
+                        "updated_at": "2025-08-09T21:23:47.000000Z",
+                        "candidato": null
+                    },
+                    {
+                        "id": 17,
+                        "pregunta_id": 7,
+                        "texto": "Tarde (12:00 PM - 6:00 PM)",
+                        "candidato_id": null,
+                        "orden": 2,
+                        "created_at": "2025-08-09T21:23:47.000000Z",
+                        "updated_at": "2025-08-09T21:23:47.000000Z",
+                        "candidato": null
+                    },
+                    {
+                        "id": 18,
+                        "pregunta_id": 7,
+                        "texto": "Noche (6:00 PM - 10:00 PM)",
+                        "candidato_id": null,
+                        "orden": 3,
+                        "created_at": "2025-08-09T21:23:47.000000Z",
+                        "updated_at": "2025-08-09T21:23:47.000000Z",
+                        "candidato": null
+                    },
+                    {
+                        "id": 19,
+                        "pregunta_id": 7,
+                        "texto": "Fines de semana",
+                        "candidato_id": null,
+                        "orden": 4,
+                        "created_at": "2025-08-09T21:23:47.000000Z",
+                        "updated_at": "2025-08-09T21:23:47.000000Z",
+                        "candidato": null
+                    }
+                ]
+            }
+        ],
+        "respuestas": []
+    },
+    "metadata": {
+        "total_preguntas": 2,
+        "total_respuestas": 0,
+        "total_respuestas_unicas": 0
+    }
+}

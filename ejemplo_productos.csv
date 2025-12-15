@@ -1,0 +1,12 @@
+nombre,descripcion,tipo_producto,tipo_oro
+"Anillo de Oro 18K Clásico","Anillo elegante de oro de 18 kilates con diseño clásico atemporal","Joyería","Oro 18K"
+"Cadena de Plata 925","Cadena de plata 925 con eslabones tradicionales, 50cm de largo","Joyería",
+"Producto Sin Tipo","Producto que usará el tipo por defecto (ID 2)",,
+"Lingote de Oro 1oz","Lingote de oro puro 999.9 de una onza para inversión","Inversión","Oro Puro"
+"Reloj de Oro Amarillo","Reloj de lujo con caja de oro amarillo de 14 kilates","Relojería","Oro 14K"
+"Aretes de Oro Blanco","Par de aretes en oro blanco 18K con diseño minimalista","Joyería","Oro Blanco 18K"
+"Collar de Perlas","Collar clásico de perlas cultivadas con cierre de oro","Joyería","Oro 14K"
+"Brazalete de Plata","Brazalete artesanal de plata con grabados tradicionales","Joyería",
+"Otro Producto Sin Tipo","Este también usará el tipo por defecto",,
+"Moneda de Oro Águila","Moneda de oro American Eagle de 1 onza","Numismática","Oro Puro"
+"Anillo de Compromiso","Anillo de compromiso en oro blanco con solitario","Joyería","Oro Blanco 18K"

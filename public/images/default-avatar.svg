@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" fill="none">
+  <!-- Fondo circular -->
+  <circle cx="50" cy="50" r="50" fill="#e5e7eb"/>
+
+  <!-- Ícono de persona -->
+  <path d="M50 20c8.284 0 15 6.716 15 15s-6.716 15-15 15-15-6.716-15-15 6.716-15 15-15z" fill="#9ca3af"/>
+  <path d="M25 75c0-13.807 11.193-25 25-25s25 11.193 25 25v5H25v-5z" fill="#9ca3af"/>
+</svg>

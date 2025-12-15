@@ -1,0 +1,5 @@
+<!-- Magnifying Glass Icon -->
+<svg {{ $attributes->merge(['class' => 'w-6 h-6', 'viewBox' => '0 0 24 24', 'fill' => 'none', 'stroke' => 'currentColor']) }}>
+    <circle cx="11" cy="11" r="8"/>
+    <path d="m21 21-4.35-4.35"/>
+</svg>

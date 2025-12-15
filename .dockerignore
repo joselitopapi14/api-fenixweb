@@ -1,0 +1,44 @@
+
+# Version Control
+.git
+.github
+.gitignore
+
+# Dependencies
+/node_modules
+/vendor
+
+# Environment
+.env
+.env.example
+.env.backup
+.env.production
+.phpunit.result.cache
+
+# IDE / Editor
+.idea
+.vscode
+.editorconfig
+*.sublime-*
+
+# Build Outputs
+/public/build
+/public/hot
+public/storage
+
+# Logs & Debug
+/storage/logs/*.log
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/testing/*
+/storage/framework/views/*
+debug_output.txt
+*.log
+
+# Misc
+README.md
+LICENSE
+# Keep lock files for reproducible builds
+# package-lock.json
+# composer.lock
+
