@@ -46,11 +46,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/debug-permissions', function (Request $request) {
         $user = $request->user();
         return response()->json([
-            'id' => $user->id,
-            'roles' => $user->getRoleNames(),
-            'permissions' => $user->getAllPermissions()->pluck('name'),
-            'can_view_users' => $user->can('users.view'),
-            'guard_name' => $user->guard_name ?? 'null' // Spatie trait might expose this
+            'check_can_users_view' => $user->can('users.view'),
+            'current_guard_config' => config('auth.guards.api'),
+            
+            // Inspección directa a la BD para ver qué guard tienen realmente
+            'roles_in_db' => \Spatie\Permission\Models\Role::where('name', 'role.admin')->get(['id', 'name', 'guard_name']),
+            'permissions_in_db' => \Spatie\Permission\Models\Permission::where('name', 'users.view')->get(['id', 'name', 'guard_name']),
+            
+            // Qué roles cree Laravel que tiene el usuario cargado
+            'user_loaded_roles' => $user->roles->map(fn($r) => ['name' => $r->name, 'guard' => $r->guard_name]),
         ]);
     });
 
