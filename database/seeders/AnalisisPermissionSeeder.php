@@ -28,13 +28,13 @@ class AnalisisPermissionSeeder extends Seeder
         }
 
         // Asignar permisos al rol de admin
-        $adminRole = Role::where('name', 'role.admin')->first();
+        $adminRole = Role::where('name', 'role.admin')->where('guard_name', 'sanctum')->first();
         if ($adminRole) {
             $adminRole->givePermissionTo(array_keys($analisisPermissions));
         }
 
         // También podemos asignar a otros roles si existen
-        $userRole = Role::where('name', 'role.user')->first();
+        $userRole = Role::where('name', 'role.user')->where('guard_name', 'sanctum')->first();
         if ($userRole) {
             $userRole->givePermissionTo('analisis.view');
         }
