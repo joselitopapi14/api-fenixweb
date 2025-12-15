@@ -14,11 +14,12 @@ RUN composer install \
     --ignore-platform-reqs \
     --optimize-autoloader \
     --classmap-authoritative \
+    --no-scripts \
     --no-scripts
 
 
 # ==========================================
-# Stage 2: PHP-FPM (Dokploy)
+# Stage 2: PHP-FPM + Nginx (Supervisor)
 # ==========================================
 FROM php:8.4-fpm-alpine
 
@@ -27,16 +28,19 @@ WORKDIR /var/www/html
 ENV TZ=America/Bogota
 
 # ------------------------------------------------
-# PHP extensions
+# PHP extensions & System Deps
 # ------------------------------------------------
 RUN set -ex \
     && apk add --no-cache \
+    nginx \
+    supervisor \
     icu-libs \
     libzip \
     libpng \
     libjpeg-turbo \
     freetype \
     libpq \
+    tini \
     && apk add --no-cache --virtual .build-deps \
     $PHPIZE_DEPS \
     icu-dev \
@@ -58,13 +62,14 @@ RUN set -ex \
     && apk del .build-deps \
     && rm -rf /tmp/* /var/cache/apk/*
 
-
 # ------------------------------------------------
-# PHP configuration
+# Configuration
 # ------------------------------------------------
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/99-custom.ini
 COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/10-opcache.ini
-
+COPY docker/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # ------------------------------------------------
 # Application
@@ -73,17 +78,22 @@ COPY --from=vendor /app/vendor ./vendor
 COPY . .
 
 # ------------------------------------------------
-# Laravel permissions
+# Permissions & Nginx Setup
 # ------------------------------------------------
 RUN chmod -R 775 storage bootstrap/cache \
-    && chown -R www-data:www-data storage bootstrap/cache
-
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && mkdir -p /var/log/supervisor \
+    && touch /var/run/nginx.pid \
+    && chown -R www-data:www-data /var/run/nginx.pid /var/lib/nginx /var/log/nginx /var/log/supervisor
 
 # ------------------------------------------------
 # Runtime
 # ------------------------------------------------
 USER www-data
 
-EXPOSE 9000
+# Exponer PUERTO 8080 (Donde escucha Nginx)
+EXPOSE 8080
 
-CMD ["php-fpm"]
+ENTRYPOINT ["/sbin/tini", "--"]
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
