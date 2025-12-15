@@ -28,8 +28,17 @@ class UserController extends BaseController
      */
     public function index(): JsonResponse
     {
-        $users = User::with('roles')->latest()->paginate(10);
-        return $this->sendResponse($users, 'Users retrieved successfully.');
+        try {
+            // Verificar si tenemos acceso antes de la consulta
+            if (!auth()->user()->can('users.view')) {
+                 return $this->sendError('Unauthorized.', ['reason' => 'Spatie says no despite having role'], 403);
+            }
+
+            $users = User::with('roles')->latest()->paginate(10);
+            return $this->sendResponse($users, 'Users retrieved successfully.');
+        } catch (\Throwable $e) {
+            return $this->sendError('Server Error.', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()], 500);
+        }
     }
 
     /**
