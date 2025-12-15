@@ -39,7 +39,7 @@ class UserSeeder extends Seeder
         );
 
         // Asignar rol de admin al primer usuario y al tercero (Jose Otero)
-        $adminRole = Role::where('name', 'role.admin')->first();
+        $adminRole = Role::where('name', 'role.admin')->where('guard_name', 'sanctum')->first();
         if ($adminRole) {
             if ($adminUser) {
                 $adminUser->assignRole($adminRole);

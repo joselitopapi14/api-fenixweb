@@ -26,14 +26,14 @@ class EmpresaRolesSeeder extends Seeder
         foreach ($empresaPermissions as $name => $description) {
             Permission::firstOrCreate(
                 ['name' => $name],
-                ['guard_name' => 'web']
+                ['guard_name' => 'sanctum']
             );
         }
 
         // Crear rol para administrador de empresa
         $adminEmpresaRole = Role::firstOrCreate([
             'name' => 'admin_empresa',
-            'guard_name' => 'web'
+            'guard_name' => 'sanctum'
         ]);
 
         // Asignar permisos al rol admin_empresa
@@ -49,7 +49,7 @@ class EmpresaRolesSeeder extends Seeder
         // Crear rol para empleado de empresa
         $empleadoRole = Role::firstOrCreate([
             'name' => 'empleado_empresa',
-            'guard_name' => 'web'
+            'guard_name' => 'sanctum'
         ]);
 
         // Asignar permisos limitados al empleado

@@ -23,7 +23,7 @@ class AnalisisPermissionSeeder extends Seeder
         foreach ($analisisPermissions as $name => $description) {
             Permission::firstOrCreate(
                 ['name' => $name],
-                ['guard_name' => 'web']
+                ['guard_name' => 'sanctum']
             );
         }
 
