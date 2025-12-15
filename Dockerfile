@@ -24,10 +24,7 @@ RUN composer install \
 # ==========================================
 # Stage 2: Final Production Image
 # ==========================================
-# ==========================================
-# Stage 2: Final Production Image
-# ==========================================
-FROM php:8.5-rc-fpm-alpine as final
+FROM php:8.4-fpm-alpine as final
 
 # Set working directory
 WORKDIR /var/www/html
@@ -38,33 +35,11 @@ ENV PHP_OPCACHE_ENABLE_CLI=1
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS=0
 ENV TZ=America/Bogota
 
-# Install system dependencies & PHP extensions
-RUN set -ex \
-    && apk add --no-cache \
-    nginx \
-    supervisor \
-    curl \
-    zip \
-    unzip \
-    icu-libs \
-    libzip \
-    libpng \
-    libjpeg-turbo \
-    freetype \
-    libpq \
-    tini \
-    && apk add --no-cache --virtual .build-deps \
-    $PHPIZE_DEPS \
-    icu-dev \
-    libzip-dev \
-    libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    libpq-dev \
-    linux-headers \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-configure zip \
-    && docker-php-ext-install -j$(nproc) \
+# Install system dependencies & PHP extensions using the official installer script
+# This handles all dependency resolution automatically for Alpine
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+
+RUN install-php-extensions \
     pdo_pgsql \
     intl \
     zip \
@@ -72,8 +47,12 @@ RUN set -ex \
     opcache \
     bcmath \
     pcntl \
-    && apk del .build-deps \
-    && rm -rf /tmp/* /var/cache/apk/*
+    && apk add --no-cache \
+    nginx \
+    supervisor \
+    curl \
+    unzip \
+    tini
 
 # Copy configuration files
 # Ensure these files exist in your project or create them
