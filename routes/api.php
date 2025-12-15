@@ -53,8 +53,11 @@ Route::middleware('auth:sanctum')->group(function () {
             'roles_in_db' => \Spatie\Permission\Models\Role::where('name', 'role.admin')->get(['id', 'name', 'guard_name']),
             'permissions_in_db' => \Spatie\Permission\Models\Permission::where('name', 'users.view')->get(['id', 'name', 'guard_name']),
             
-            // Qué roles cree Laravel que tiene el usuario cargado
-            'user_loaded_roles' => $user->roles->map(fn($r) => ['name' => $r->name, 'guard' => $r->guard_name]),
+            // Verificar si el rol tiene el permiso asignado
+            'role_has_permission' => \Spatie\Permission\Models\Role::where('name', 'role.admin')->first()->hasPermissionTo('users.view'),
+            
+            // Ver si hay permisos asociados al rol
+            'role_permissions_count' => \Spatie\Permission\Models\Role::where('name', 'role.admin')->first()->permissions()->count(),
         ]);
     });
 
