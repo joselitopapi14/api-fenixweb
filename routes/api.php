@@ -55,8 +55,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Users Resource
-    // Especificamos 'web' guard porque los permisos se crearon con ese guard
-    Route::apiResource('users', UserController::class)->middleware('permission:users.view|users.create|users.edit|users.delete,web');
+    // La autorización se maneja en el controlador
+    Route::apiResource('users', UserController::class);
 
     // --- Core Data Endpoints ---
 

@@ -127,21 +127,22 @@ return new class extends Migration {
         // Crear permisos
         $permissions = [
             ['id' => 1, 'name' => 'config.show', 'guard_name' => 'web'],
-            ['id' => 2, 'name' => 'dashboard.view', 'guard_name' => 'web'],
-            ['id' => 3, 'name' => 'users.view', 'guard_name' => 'web'],
-            ['id' => 4, 'name' => 'users.create', 'guard_name' => 'web'],
-            ['id' => 5, 'name' => 'users.edit', 'guard_name' => 'web'],
-            ['id' => 6, 'name' => 'users.delete', 'guard_name' => 'web'],
-            ['id' => 7, 'name' => 'roles.view', 'guard_name' => 'web'],
-            ['id' => 8, 'name' => 'roles.create', 'guard_name' => 'web'],
-            ['id' => 9, 'name' => 'roles.edit', 'guard_name' => 'web'],
-            ['id' => 10, 'name' => 'roles.delete', 'guard_name' => 'web'],
-            ['id' => 11, 'name' => 'reports.view', 'guard_name' => 'web'],
-            ['id' => 12, 'name' => 'analytics.view', 'guard_name' => 'web'],
-            ['id' => 13, 'name' => 'registros.view', 'guard_name' => 'web'],
-            ['id' => 14, 'name' => 'registros.create', 'guard_name' => 'web'],
-            ['id' => 15, 'name' => 'registros.edit', 'guard_name' => 'web'],
-            ['id' => 16, 'name' => 'registros.delete', 'guard_name' => 'web'],
+            ['id' => 1, 'name' => 'dashboard.view', 'guard_name' => 'api'],
+            ['id' => 2, 'name' => 'users.view', 'guard_name' => 'api'],
+            ['id' => 3, 'name' => 'users.create', 'guard_name' => 'api'],
+            ['id' => 4, 'name' => 'users.edit', 'guard_name' => 'api'],
+            ['id' => 5, 'name' => 'users.delete', 'guard_name' => 'api'],
+            ['id' => 6, 'name' => 'roles.view', 'guard_name' => 'api'],
+            ['id' => 7, 'name' => 'roles.create', 'guard_name' => 'api'],
+            ['id' => 8, 'name' => 'roles.edit', 'guard_name' => 'api'],
+            ['id' => 9, 'name' => 'roles.delete', 'guard_name' => 'api'],
+            ['id' => 10, 'name' => 'config.show', 'guard_name' => 'api'],
+            ['id' => 11, 'name' => 'reports.view', 'guard_name' => 'api'],
+            ['id' => 12, 'name' => 'analytics.view', 'guard_name' => 'api'],
+            ['id' => 13, 'name' => 'registros.view', 'guard_name' => 'api'],
+            ['id' => 14, 'name' => 'registros.create', 'guard_name' => 'api'],
+            ['id' => 15, 'name' => 'registros.edit', 'guard_name' => 'api'],
+            ['id' => 16, 'name' => 'registros.delete', 'guard_name' => 'api'],
         ];
 
         foreach ($permissions as $permissionData) {
@@ -150,13 +151,13 @@ return new class extends Migration {
 
         // Crear roles
         $roles = [
-            ['id' => 1, 'name' => 'role.admin', 'guard_name' => 'web'],
-            ['id' => 2, 'name' => 'role.employee', 'guard_name' => 'web'],
-            ['id' => 3, 'name' => 'role.supervisor1', 'guard_name' => 'web'],
-            ['id' => 4, 'name' => 'role.candidatos', 'guard_name' => 'web'],
-            ['id' => 5, 'name' => 'role.lider', 'guard_name' => 'web'],
-            ['id' => 6, 'name' => 'role.call', 'guard_name' => 'web'],
-            ['id' => 7, 'name' => 'role.digitador', 'guard_name' => 'web'],
+            ['id' => 1, 'name' => 'role.admin', 'guard_name' => 'api'],
+            ['id' => 2, 'name' => 'role.employee', 'guard_name' => 'api'],
+            ['id' => 3, 'name' => 'role.supervisor1', 'guard_name' => 'api'],
+            ['id' => 4, 'name' => 'role.candidatos', 'guard_name' => 'api'],
+            ['id' => 5, 'name' => 'role.lider', 'guard_name' => 'api'],
+            ['id' => 6, 'name' => 'role.call', 'guard_name' => 'api'],
+            ['id' => 7, 'name' => 'role.digitador', 'guard_name' => 'api'],
         ];
 
         foreach ($roles as $roleData) {
