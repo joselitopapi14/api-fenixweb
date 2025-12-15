@@ -91,11 +91,11 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware('permission:registros.create');
 
     Route::get('/tipos-factura', function() {
-        return TipoFactura::select('id', 'name')->get();
+        return TipoFactura::select('id', 'name', 'code')->get();
     });
 
     Route::get('/medios-pago', function() {
-        return MedioPago::select('id', 'name')->get();
+        return MedioPago::select('id', 'name', 'code')->get();
     });
 
     Route::get('/tipos-pago', function() {
