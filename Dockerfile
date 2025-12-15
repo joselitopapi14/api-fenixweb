@@ -12,8 +12,8 @@ RUN composer install \
     --no-interaction \
     --prefer-dist \
     --ignore-platform-reqs \
-    --no-autoloader \
-    --no-scripts
+    --optimize-autoloader \
+    --classmap-authoritative
 
 
 # ==========================================
@@ -26,7 +26,7 @@ WORKDIR /var/www/html
 ENV TZ=America/Bogota
 
 # ------------------------------------------------
-# PHP extensions only (NO nginx, NO supervisor)
+# PHP extensions
 # ------------------------------------------------
 RUN set -ex \
     && apk add --no-cache \
@@ -70,12 +70,6 @@ COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/10-opcache.ini
 # ------------------------------------------------
 COPY --from=vendor /app/vendor ./vendor
 COPY . .
-
-RUN composer dump-autoload \
-    --optimize \
-    --classmap-authoritative \
-    --no-dev
-
 
 # ------------------------------------------------
 # Laravel permissions
