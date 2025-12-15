@@ -43,8 +43,20 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
+    Route::get('/debug-permissions', function (Request $request) {
+        $user = $request->user();
+        return response()->json([
+            'id' => $user->id,
+            'roles' => $user->getRoleNames(),
+            'permissions' => $user->getAllPermissions()->pluck('name'),
+            'can_view_users' => $user->can('users.view'),
+            'guard_name' => $user->guard_name ?? 'null' // Spatie trait might expose this
+        ]);
+    });
+
     // Users Resource
-    Route::apiResource('users', UserController::class)->middleware('permission:users.view|users.create|users.edit|users.delete');
+    // Especificamos 'web' guard porque los permisos se crearon con ese guard
+    Route::apiResource('users', UserController::class)->middleware('permission:users.view|users.create|users.edit|users.delete,web');
 
     // --- Core Data Endpoints ---
 
