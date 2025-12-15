@@ -53,35 +53,27 @@ Route::middleware('auth:sanctum')->group(function () {
         /** @var \App\Models\User $user */
         $user = auth()->user();
         
+        if (!$user) {
+            return response()->json([], 401);
+        }
+
+        // Verificar si es admin global
+        // Usamos try-catch interno por si Spatie falla, pero no bloqueamos todo el endpoint
+        $isAdmin = false;
         try {
-            if (!$user) {
-                return response()->json([], 401);
-            }
-
-            // Usar hasRole directamente en lugar de método mágico si es posible, o el método propio
-            $isAdmin = false;
-            try {
-                $isAdmin = $user->hasRole('role.admin');
-            } catch (\Throwable $e) {
-                // Si falla Spatie, asummimos que no es admin
-                \Illuminate\Support\Facades\Log::error('Error verificando rol: ' . $e->getMessage());
-            }
-
-            if ($isAdmin) {
-                return response()->json(Empresa::activas()->orderBy('razon_social')->get(['id', 'razon_social']));
-            } else {
-                if (method_exists($user, 'empresasActivas')) {
-                    return response()->json($user->empresasActivas()->get(['id', 'razon_social']));
-                }
-                return response()->json([]);
-            }
+            $isAdmin = $user->hasRole('role.admin');
         } catch (\Throwable $e) {
-            return response()->json([
-                'message' => 'Server Error en /empresas',
-                'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine()
-            ], 500);
+            \Illuminate\Support\Facades\Log::error('Error verificando rol admin: ' . $e->getMessage());
+        }
+
+        if ($isAdmin) {
+            return response()->json(Empresa::activas()->orderBy('razon_social')->get(['id', 'razon_social']));
+        } else {
+            if (method_exists($user, 'empresasActivas')) {
+                // FIXED: Column reference "id" is ambiguous. Specificamos la tabla.
+                return response()->json($user->empresasActivas()->get(['empresas.id', 'empresas.razon_social']));
+            }
+            return response()->json([]);
         }
     });
 
