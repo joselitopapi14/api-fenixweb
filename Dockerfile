@@ -67,6 +67,7 @@ RUN set -ex \
 # ------------------------------------------------
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/99-custom.ini
 COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/10-opcache.ini
+COPY docker/php/www.conf /usr/local/etc/php-fpm.d/www.conf
 COPY docker/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -80,11 +81,12 @@ COPY . .
 # ------------------------------------------------
 # Permissions & Nginx Setup
 # ------------------------------------------------
-RUN chmod -R 775 storage bootstrap/cache \
+RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
-    && mkdir -p /var/log/supervisor \
+    && mkdir -p /var/log/supervisor /tmp/nginx \
     && touch /var/run/nginx.pid \
-    && chown -R www-data:www-data /var/run/nginx.pid /var/lib/nginx /var/log/nginx /var/log/supervisor
+    && chown -R www-data:www-data /var/run/nginx.pid /var/lib/nginx /var/log/nginx /var/log/supervisor /tmp/nginx
 
 # ------------------------------------------------
 # Runtime
