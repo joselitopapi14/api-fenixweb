@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
             MunicipiosSeeder::class,
             ComunaSeeder::class,
             BarrioSeeder::class,
-            EmpresaRolesSeeder::class
+            EmpresaRolesSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }
