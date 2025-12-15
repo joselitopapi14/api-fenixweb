@@ -75,13 +75,15 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # ------------------------------------------------
 # Application
 # ------------------------------------------------
+COPY --from=vendor /usr/bin/composer /usr/bin/composer
 COPY --from=vendor /app/vendor ./vendor
 COPY . .
 
 # ------------------------------------------------
-# Permissions & Nginx Setup
+# Regenerate Autoloader & Permissions
 # ------------------------------------------------
-RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache \
+RUN composer dump-autoload --optimize --classmap-authoritative --no-dev \
+    && mkdir -p storage/logs storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
     && mkdir -p /var/log/supervisor /tmp/nginx \
