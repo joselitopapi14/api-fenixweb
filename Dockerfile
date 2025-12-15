@@ -82,7 +82,7 @@ COPY . .
 # ------------------------------------------------
 # Regenerate Autoloader & Permissions
 # ------------------------------------------------
-RUN composer dump-autoload --optimize --classmap-authoritative --no-dev \
+RUN composer dump-autoload --optimize --classmap-authoritative --no-dev --ignore-platform-reqs \
     && mkdir -p storage/logs storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
