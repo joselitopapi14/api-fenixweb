@@ -7,14 +7,13 @@ WORKDIR /app
 
 COPY composer.json composer.lock ./
 
-RUN composer install \
+RUN composer update \
     --no-dev \
     --no-interaction \
     --prefer-dist \
     --ignore-platform-reqs \
     --optimize-autoloader \
     --classmap-authoritative \
-    --no-scripts \
     --no-scripts
 
 
