@@ -126,7 +126,6 @@ return new class extends Migration {
 
         // Crear permisos
         $permissions = [
-            ['id' => 1, 'name' => 'config.show', 'guard_name' => 'web'],
             ['id' => 1, 'name' => 'dashboard.view', 'guard_name' => 'sanctum'],
             ['id' => 2, 'name' => 'users.view', 'guard_name' => 'sanctum'],
             ['id' => 3, 'name' => 'users.create', 'guard_name' => 'sanctum'],
