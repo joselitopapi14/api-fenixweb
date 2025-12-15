@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
 {
@@ -13,7 +14,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::firstOrCreate(
+        $adminUser = User::firstOrCreate(
             ['email' => 'ggaleanoguerra@gmail.com'],
             [
                 'name' => 'Gabriel Galeano Guerra',
@@ -36,5 +37,12 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('joselito1234')
             ]
         );
+
+        // Asignar rol de admin al primer usuario
+        $adminRole = Role::where('name', 'role.admin')->first();
+        if ($adminRole && $adminUser) {
+            $adminUser->assignRole($adminRole);
+        }
     }
 }
+

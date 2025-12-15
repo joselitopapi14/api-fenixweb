@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use App\Models\User;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -170,11 +169,8 @@ return new class extends Migration {
         // Asignar todos los permisos al rol admin
         $role->syncPermissions(Permission::all());
 
-        // Asignar rol al usuario con ID 1
-        $user = User::find(1);
-        if ($user) {
-            $user->assignRole($role);
-        }
+        // NOTE: La asignación de roles a usuarios se hace en el UserSeeder
+        // ya que los usuarios aún no existen durante las migraciones
 
         app('cache')
             ->store(config('permission.cache.store') != 'default' ? config('permission.cache.store') : null)
