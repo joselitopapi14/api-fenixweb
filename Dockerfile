@@ -13,7 +13,8 @@ RUN composer install \
     --prefer-dist \
     --ignore-platform-reqs \
     --optimize-autoloader \
-    --classmap-authoritative
+    --classmap-authoritative \
+    --no-scripts
 
 
 # ==========================================
