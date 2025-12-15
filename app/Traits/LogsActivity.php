@@ -60,7 +60,7 @@ trait LogsActivity
     /**
      * Registra un evento personalizado
      */
-    public function logCustomActivity(string $event, string $description = null, array $properties = []): void
+    public function logCustomActivity(string $event, ?string $description = null, array $properties = []): void
     {
         activity()
             ->performedOn($this)
