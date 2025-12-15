@@ -53,17 +53,35 @@ Route::middleware('auth:sanctum')->group(function () {
         /** @var \App\Models\User $user */
         $user = auth()->user();
         
-        if (!$user) {
-            return response()->json([], 401);
-        }
-
-        if (method_exists($user, 'esAdministradorGlobal') && $user->esAdministradorGlobal()) {
-            return response()->json(Empresa::activas()->orderBy('razon_social')->get(['id', 'razon_social']));
-        } else {
-            if (method_exists($user, 'empresasActivas')) {
-                return response()->json($user->empresasActivas()->get(['id', 'razon_social']));
+        try {
+            if (!$user) {
+                return response()->json([], 401);
             }
-            return response()->json([]);
+
+            // Usar hasRole directamente en lugar de método mágico si es posible, o el método propio
+            $isAdmin = false;
+            try {
+                $isAdmin = $user->hasRole('role.admin');
+            } catch (\Throwable $e) {
+                // Si falla Spatie, asummimos que no es admin
+                \Illuminate\Support\Facades\Log::error('Error verificando rol: ' . $e->getMessage());
+            }
+
+            if ($isAdmin) {
+                return response()->json(Empresa::activas()->orderBy('razon_social')->get(['id', 'razon_social']));
+            } else {
+                if (method_exists($user, 'empresasActivas')) {
+                    return response()->json($user->empresasActivas()->get(['id', 'razon_social']));
+                }
+                return response()->json([]);
+            }
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Server Error en /empresas',
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ], 500);
         }
     });
 
