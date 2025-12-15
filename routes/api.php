@@ -53,8 +53,11 @@ Route::middleware('auth:sanctum')->group(function () {
         /** @var \App\Models\User $user */
         $user = auth()->user();
         
+        if (!$user) {
+            return response()->json([], 401);
+        }
+
         if (method_exists($user, 'esAdministradorGlobal') && $user->esAdministradorGlobal()) {
-            // Activas scope usually exists on model
             return response()->json(Empresa::activas()->orderBy('razon_social')->get(['id', 'razon_social']));
         } else {
             if (method_exists($user, 'empresasActivas')) {
@@ -88,21 +91,15 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware('permission:registros.create');
 
     Route::get('/tipos-factura', function() {
-        return TipoFactura::select('id', 'name')->get()->map(function($tipo) {
-            return ['id' => $tipo->id, 'name' => $tipo->name, 'nombre' => $tipo->name];
-        });
+        return TipoFactura::select('id', 'name')->get();
     });
 
     Route::get('/medios-pago', function() {
-        return MedioPago::select('id', 'name')->get()->map(function($medio) {
-            return ['id' => $medio->id, 'name' => $medio->name, 'nombre' => $medio->name];
-        });
+        return MedioPago::select('id', 'name')->get();
     });
 
     Route::get('/tipos-pago', function() {
-        return TipoPago::select('id', 'name', 'code')->get()->map(function($tipo) {
-            return ['id' => $tipo->id, 'name' => $tipo->name, 'nombre' => $tipo->name, 'code' => $tipo->code];
-        });
+        return TipoPago::select('id', 'name', 'code')->get();
     });
 
     Route::get('/retenciones', function() {
@@ -177,7 +174,7 @@ Route::middleware('auth:sanctum')->group(function () {
             return [
                 'id' => $producto->id,
                 'name' => $producto->nombre,
-                'nombre' => $producto->nombre,
+
                 'descripcion' => $producto->descripcion,
                 'precio_venta' => $producto->precio_venta,
                 'codigo_barras' => $producto->codigo_barras,

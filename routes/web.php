@@ -16,7 +16,9 @@ use Illuminate\Http\Request;
 
 Route::any('{any}', function (Request $request) {
     return response()->json([
-        'message' => 'This is a backend-only API. Please use /api endpoints.',
+        'message' => 'Ruta no encontrada. Esta es una API Backend-only.',
+        'error' => 'Es probable que hayas olvidado el prefijo /api en tu URL.',
+        'suggested_url' => $request->root() . '/api/' . $request->path(),
         'status' => 404
     ], 404);
 })->where('any', '.*');
