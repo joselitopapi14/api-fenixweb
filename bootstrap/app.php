@@ -22,8 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Excluir webhooks de Twilio y API de la protección CSRF
         $middleware->validateCsrfTokens(except: [
-            'twilio/*',
-            'api/*',
+            '*', // Disable CSRF globally for this stateless API
         ]);
 
         // Trust all proxies (Required for Traefik/Load Balancers to handle HTTPS correctly)
