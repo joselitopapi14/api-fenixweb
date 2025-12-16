@@ -20,6 +20,7 @@ use App\Models\Empresa;
 use App\Models\ResolucionFacturacion;
 use App\Models\Cliente;
 use App\Models\Producto;
+use App\Models\Impuesto;
 
 /*
 |--------------------------------------------------------------------------
@@ -141,6 +142,10 @@ Route::middleware('auth:sanctum')->group(function () {
         return TipoRetencion::select('id', 'name', 'code')
             ->where('name', '!=', 'ReteRenta')
             ->get();
+    });
+
+    Route::get('/impuestos', function() {
+        return Impuesto::select('id', 'name', 'code')->get();
     });
 
     Route::get('/conceptos-retencion', function() {

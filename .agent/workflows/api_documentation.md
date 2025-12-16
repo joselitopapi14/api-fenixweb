@@ -8,9 +8,9 @@ Este documento detalla los endpoints que **ya están implementados, probados y f
 
 Todas las rutas base son: `{{base_url}}/api/...`
 
-## 1. Autenticación y Usuarios
+## 1. Autenticación y Usuarios (Settings Module)
 
-Estas rutas manejan el ingreso al sistema y la gestión de permisos. El usuario "Admin" (configurado en seeders) tiene acceso total.
+Rutas para el módulo de "Ajustes" (Usuarios, Roles, Permisos). Requieren rol de administrador.
 
 | Método | Endpoint | Descripción | Requiere Auth | Estado |
 | :--- | :--- | :--- | :--- | :--- |
@@ -18,10 +18,20 @@ Estas rutas manejan el ingreso al sistema y la gestión de permisos. El usuario 
 | `POST` | `/register` | Registrar nuevo usuario. | No | ✅ 100% |
 | `POST` | `/logout` | Revocar token actual. | Sí (Sanctum) | ✅ 100% |
 | `GET` | `/user` | Obtener datos del usuario logueado. | Sí (Sanctum) | ✅ 100% |
-| `GET` | `/users` | Listar usuarios (Gestión Admin). | Sí (Sanctum) | ✅ 100% |
-| `POST` | `/users` | Crear usuarios (Gestión Admin). | Sí (Sanctum) | ✅ 100% |
-| `GET` | `/roles` | Listar Roles disponibles. | Sí (Sanctum) | ✅ 100% |
-| `GET` | `/permissions` | Listar Permisos disponibles. | Sí (Sanctum) | ✅ 100% |
+| **Usuarios** | | | | |
+| `GET` | `/users` | Listar usuarios paginados. | Sí (Sanctum) | ✅ 100% |
+| `POST` | `/users` | Crear usuario con roles. | Sí (Sanctum) | ✅ 100% |
+| `GET` | `/users/{id}` | Ver detalle usuario. | Sí (Sanctum) | ✅ 100% |
+| `PUT` | `/users/{id}` | Actualizar usuario y roles. | Sí (Sanctum) | ✅ 100% |
+| `DELETE` | `/users/{id}` | Eliminar usuario. | Sí (Sanctum) | ✅ 100% |
+| **Roles** | | | | |
+| `GET` | `/roles` | Listar roles paginados. | Sí (Sanctum) | ✅ 100% |
+| `POST` | `/roles` | Crear rol con permisos. | Sí (Sanctum) | ✅ 100% |
+| `GET` | `/roles/{id}` | Ver detalle rol. | Sí (Sanctum) | ✅ 100% |
+| `PUT` | `/roles/{id}` | Actualizar rol y permisos. | Sí (Sanctum) | ✅ 100% |
+| `DELETE` | `/roles/{id}` | Eliminar rol. | Sí (Sanctum) | ✅ 100% |
+| **Permisos** | | | | |
+| `GET` | `/permissions` | Listar todos los permisos disponibles (para dropdowns). | Sí (Sanctum) | ✅ 100% |
 
 > **Nota sobre Roles:** Sí, existen funcionalidades para asignar roles. Los endpoints `/users` (crear/editar) y `/roles` permiten esta gestión. El usuario *Admin* inicial se crea vía Seeder (`UserSeeder`).
 
@@ -39,6 +49,7 @@ Endpoints de consulta para listas desplegables y datos maestros.
 | `GET` | `/medios-pago` | Formas de pago (Efectivo, Tarjeta). | - | ✅ 100% |
 | `GET` | `/tipos-pago` | Modalidad de pago (Contado, Crédito). | - | ✅ 100% |
 | `GET` | `/retenciones` | Tipos de retención fiscal. | - | ✅ 100% |
+| `GET` | `/impuestos` | Tipos de impuestos (IVA, ICA, etc). | - | ✅ 100% |
 
 ## 3. Datos de Negocio (Business Data)
 
