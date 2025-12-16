@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\UbicacionController;
 use App\Http\Controllers\Api\Factura\FacturaController as ApiFacturaController;
 use App\Http\Controllers\Api\ProductoController;
 use App\Http\Controllers\Api\ProductoImportController;
+use App\Http\Controllers\Api\ResolucionFacturacionController;
 use App\Models\TipoProducto;
 use App\Models\TipoOro;
 use App\Models\TipoMedida;
@@ -222,5 +223,9 @@ Route::prefix('productos')->group(function () {
 
 // Productos - CRUD
 Route::apiResource('productos', ProductoController::class);
+
+// Resoluciones de Facturación
+Route::post('resoluciones-facturacion/sincronizar', [ResolucionFacturacionController::class, 'sincronizar']);
+Route::apiResource('resoluciones-facturacion', ResolucionFacturacionController::class);
 
 }); // End of auth middleware group
