@@ -9,20 +9,13 @@ class TipoDocumentoSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     * 
+     * NOTA: Los datos iniciales ya se insertan en la migración
+     * 2025_08_22_211821_create_tipo_documentos_table.php
+     * Este seeder se mantiene vacío para evitar duplicación.
      */
     public function run(): void
     {
-        $tiposDocumento = [
-            ['nombre' => 'RC', 'descripcion' => 'Registro Civil', 'created_at' => now(), 'updated_at' => now()],
-            ['nombre' => 'TI', 'descripcion' => 'Tarjeta de Identidad', 'created_at' => now(), 'updated_at' => now()],
-            ['nombre' => 'CC', 'descripcion' => 'Cédula de Ciudadanía', 'created_at' => now(), 'updated_at' => now()],
-            ['nombre' => 'TE', 'descripcion' => 'Tarjeta de Extranjería', 'created_at' => now(), 'updated_at' => now()],
-            ['nombre' => 'CE', 'descripcion' => 'Cédula de Extranjería', 'created_at' => now(), 'updated_at' => now()],
-            ['nombre' => 'NIT', 'descripcion' => 'Número de Identificación Tributaria', 'created_at' => now(), 'updated_at' => now()],
-            ['nombre' => 'PP', 'descripcion' => 'Pasaporte', 'created_at' => now(), 'updated_at' => now()],
-            ['nombre' => 'DIE', 'descripcion' => 'Documento de Identificación Extranjero', 'created_at' => now(), 'updated_at' => now()],
-        ];
-
-        DB::table('tipo_documentos')->insert($tiposDocumento);
+        // Los datos ya están en la migración
     }
 }
