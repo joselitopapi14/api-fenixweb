@@ -35,12 +35,12 @@ class FacturaController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('numero_factura', 'like', "%{$search}%")
+                $q->where('numero_factura', 'ilike', "%{$search}%")
                   ->orWhereHas('cliente', function ($q2) use ($search) {
-                      $q2->where('nombres', 'like', "%{$search}%")
-                         ->orWhere('apellidos', 'like', "%{$search}%")
-                         ->orWhere('razon_social', 'like', "%{$search}%")
-                         ->orWhere('cedula_nit', 'like', "%{$search}%");
+                      $q2->where('nombres', 'ilike', "%{$search}%")
+                         ->orWhere('apellidos', 'ilike', "%{$search}%")
+                         ->orWhere('razon_social', 'ilike', "%{$search}%")
+                         ->orWhereRaw('CAST(cedula_nit AS TEXT) ilike ?', ["%{$search}%"]);
                   });
             });
         }
