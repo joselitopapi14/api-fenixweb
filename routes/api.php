@@ -201,11 +201,13 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     });
 
-});
+    // Clientes logic...
+    // ...
+
 
 // Productos - Importación (Debe ir antes de resource para evitar conflicto con {id})
 Route::prefix('productos')->group(function () {
-    Route::get('export', [ProductoController::class, 'export']);
+    Route::match(['get', 'post'], 'export', [ProductoController::class, 'export']);
     
     Route::prefix('import')->group(function () {
         Route::get('template', [ProductoImportController::class, 'template']);
@@ -220,3 +222,5 @@ Route::prefix('productos')->group(function () {
 
 // Productos - CRUD
 Route::apiResource('productos', ProductoController::class);
+
+}); // End of auth middleware group

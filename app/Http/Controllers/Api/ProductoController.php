@@ -84,7 +84,7 @@ class ProductoController extends Controller
         }
 
         // Paginación
-        $perPage = $request->get('per_page', 10);
+        $perPage = $request->get('per_page', 20);
         $productos = $query->paginate($perPage);
 
         // Stats calculation (Global or Enterprise scoped)
@@ -313,6 +313,6 @@ class ProductoController extends Controller
         // Reutilizamos ProductosExport si es compatible, o creamos lógica
         // Asumiendo que ProductosExport acepta parametros en constructor o usa request request()
         
-        return Excel::download(new ProductosExport($request->all()), 'productos.xlsx');
+        return Excel::download(new ProductosExport($request), 'productos.xlsx');
     }
 }
