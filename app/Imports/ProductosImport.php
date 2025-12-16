@@ -85,11 +85,27 @@ class ProductosImport implements
             }
             $tipoOroNombre = !empty($tipoOroNombre) ? $tipoOroNombre : null;
 
-            // Procesar precios (solo en formato nuevo)
+            // Tipo de medida
+            $tipoMedidaNombre = '';
+            if (isset($row['tipo_de_medida'])) {
+                $tipoMedidaNombre = trim((string)$row['tipo_de_medida']);
+                // extraer nombre si viene con abreviatura: "Gramos (g)" -> "Gramos"
+                if (preg_match('/^(.*?)\s*\(.*?\)$/', $tipoMedidaNombre, $matches)) {
+                    $tipoMedidaNombre = trim($matches[1]);
+                }
+            }
+
+            // Procesar precios
             $precioVenta = $this->procesarPrecio($row['precio_de_venta'] ?? '');
             $precioCompra = $this->procesarPrecio($row['precio_de_compra'] ?? '');
 
-            // Validar empresa solo si está especificada (solo en formato nuevo)
+            // Impuestos (separados por coma)
+            $impuestosNombres = [];
+            if (isset($row['impuestos']) && !empty($row['impuestos'])) {
+                $impuestosNombres = array_map('trim', explode(',', $row['impuestos']));
+            }
+
+            // Validar empresa
             $empresaRazonSocial = trim($row['empresa'] ?? '');
 
             if (empty($nombre)) {
@@ -98,44 +114,54 @@ class ProductosImport implements
                 return null;
             }
 
-            // Buscar o crear tipo de producto - Si no viene o está vacío, usar ID 2
-            if (empty($tipoProductoNombre)) {
-                $tipoProducto = TipoProducto::find(2);
-                if (!$tipoProducto) {
-                    $this->errores[] = "Fila {$this->procesados}: No se encontró el tipo de producto por defecto (ID: 2)";
-                    $this->omitidos++;
-                    return null;
-                }
+            // Buscar o crear tipo de producto
+            if (empty($tipoProductoNombre) || strtoupper($tipoProductoNombre) === 'GLOBAL') {
+                 // Si está vacío o es Global, intentar asignar un default o buscar
+                 // Asumiendo requerimiento: buscar por nombre si existe
+                 if (!empty($tipoProductoNombre)) {
+                      $tipoProducto = $this->buscarOCrearTipoProducto($tipoProductoNombre);
+                 } else {
+                      // Fallback a ID 2 como estaba antes? Mejor requerir nombre
+                      $tipoProducto = TipoProducto::find(2); 
+                 }
             } else {
                 $tipoProducto = $this->buscarOCrearTipoProducto($tipoProductoNombre);
-                if (!$tipoProducto) {
-                    $this->errores[] = "Fila {$this->procesados}: No se pudo crear/encontrar el tipo de producto '{$tipoProductoNombre}'";
-                    $this->omitidos++;
-                    return null;
-                }
             }
 
-            // Buscar o crear tipo de oro si se especifica
+            if (!$tipoProducto) {
+                $this->errores[] = "Fila {$this->procesados}: No se pudo determinar el tipo de producto";
+                $this->omitidos++;
+                return null;
+            }
+
+            // Buscar o crear tipo de oro
             $tipoOro = null;
             if ($tipoOroNombre) {
                 $tipoOro = $this->buscarOCrearTipoOro($tipoOroNombre);
-                if (!$tipoOro) {
-                    $this->errores[] = "Fila {$this->procesados}: No se pudo crear/encontrar el tipo de oro '{$tipoOroNombre}'";
-                    $this->omitidos++;
-                    return null;
-                }
             }
 
-            // Determinar empresa_id - prioridad: empresa especificada > empresa del constructor
+            // Buscar o crear tipo de medida
+            $tipoMedida = null;
+            if ($tipoMedidaNombre) {
+                $tipoMedida = $this->buscarOCrearTipoMedida($tipoMedidaNombre);
+            }
+
+            // Determinar empresa_id
             $empresaId = $this->empresaId;
-            if (!empty($empresaRazonSocial) && $empresaRazonSocial !== 'Global') {
-                $empresa = Empresa::where('razon_social', $empresaRazonSocial)->first();
-                if ($empresa) {
-                    $empresaId = $empresa->id;
+            // Si en el excel dice "Global", forzamos null. Si dice un nombre, buscamos.
+            if (!empty($empresaRazonSocial)) {
+                if (strcasecmp($empresaRazonSocial, 'Global') === 0) {
+                    $empresaId = null;
                 } else {
-                    $this->errores[] = "Fila {$this->procesados}: No se encontró la empresa '{$empresaRazonSocial}'";
-                    $this->omitidos++;
-                    return null;
+                    $empresa = Empresa::where('razon_social', $empresaRazonSocial)->first();
+                    if ($empresa) {
+                        $empresaId = $empresa->id;
+                    } else {
+                         // Si no encuentra empresa, error.
+                         $this->errores[] = "Fila {$this->procesados}: No se encontró la empresa '{$empresaRazonSocial}'";
+                         $this->omitidos++;
+                         return null;
+                    }
                 }
             }
 
@@ -150,6 +176,7 @@ class ProductosImport implements
                 'codigo_barras' => $codigoBarras ?: null,
                 'tipo_producto_id' => $tipoProducto->id,
                 'tipo_oro_id' => $tipoOro ? $tipoOro->id : null,
+                'tipo_medida_id' => $tipoMedida ? $tipoMedida->id : null,
                 'precio_venta' => $precioVenta,
                 'precio_compra' => $precioCompra,
                 'empresa_id' => $empresaId
@@ -175,10 +202,28 @@ class ProductosImport implements
                     return null;
                 }
 
-                $producto = new Producto($datosProducto);
+                $producto = Producto::create($datosProducto);
                 $this->creados++;
-                return $producto;
             }
+
+            // Sincronizar impuestos
+            if (!empty($impuestosNombres)) {
+                $impuestosIds = [];
+                // Buscar impuestos por nombre y guardarlos
+                $impuestosEncontrados = Impuesto::whereIn('name', $impuestosNombres)->get();
+                foreach($impuestosEncontrados as $imp) {
+                     // Obtener porcentaje
+                     $pct = $imp->impuestoPorcentajes->first()->percentage ?? 0;
+                     $impuestosIds[$imp->id] = ['porcentaje' => $pct];
+                }
+                
+                // Si encontramos impuestos válidos, sincronizamos
+                if (!empty($impuestosIds)) {
+                    $producto->impuestos()->sync($impuestosIds);
+                }
+            }
+
+            return $producto;
 
         } catch (Throwable $e) {
             $this->errores[] = "Fila {$this->procesados}: Error inesperado - " . $e->getMessage();
@@ -265,6 +310,33 @@ class ProductosImport implements
     }
 
     /**
+     * Buscar o crear tipo de medida
+     */
+    private function buscarOCrearTipoMedida($nombre)
+    {
+        // Limpiamos el nombre (por si acaso viene vacío)
+        $nombre = trim($nombre);
+        if(empty($nombre)) return null;
+
+        $tipoMedida = TipoMedida::where('nombre', $nombre)->first();
+        if ($tipoMedida) {
+            return $tipoMedida;
+        }
+
+        try {
+            return TipoMedida::create([
+                'nombre' => $nombre,
+                'abreviatura' => substr($nombre, 0, 3), // Generar abreviatura simple
+                'activo' => true
+            ]);
+        } catch (Throwable $e) {
+            Log::error('Error creando tipo de medida', ['nombre' => $nombre, 'error' => $e->getMessage()]);
+            return null;
+        }
+    }
+
+
+    /**
      * Buscar o crear tipo de oro
      */
     private function buscarOCrearTipoOro($nombre)
@@ -314,16 +386,17 @@ class ProductosImport implements
         return [
             'nombre' => ['required', 'string', 'max:255'],
             'descripcion' => ['nullable', 'string'],
-            // Formato nuevo (como export) - aceptar string o numeric
-            'codigo_de_barras' => ['nullable', 'max:255'], // Removido 'string' para aceptar números
+            'codigo_de_barras' => ['nullable', 'max:255'],
             'tipo_de_producto' => ['nullable', 'string', 'max:255'],
-            'tipo_de_oro' => ['nullable', 'max:255'], // Removido 'string' para aceptar números
-            'precio_de_venta' => ['nullable'], // Removido 'string' para aceptar números
-            'precio_de_compra' => ['nullable'], // Removido 'string' para aceptar números
+            'tipo_de_oro' => ['nullable', 'max:255'],
+            'tipo_de_medida' => ['nullable', 'max:255'],
+            'precio_de_venta' => ['nullable'],
+            'precio_de_compra' => ['nullable'],
+            'impuestos' => ['nullable'],
             'empresa' => ['nullable', 'string', 'max:255'],
-            // Formato legacy (compatibilidad)
+            // Legacy support kept minimal
             'tipo_producto' => ['nullable', 'string', 'max:255'],
-            'tipo_oro' => ['nullable', 'max:255'], // Removido 'string' para aceptar números
+            'tipo_oro' => ['nullable', 'max:255'],
         ];
     }
 
