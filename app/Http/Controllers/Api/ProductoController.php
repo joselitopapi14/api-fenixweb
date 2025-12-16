@@ -128,13 +128,16 @@ class ProductoController extends Controller
             'descripcion' => 'nullable|string|max:1000',
             'tipo_producto_id' => 'required|exists:tipo_productos,id',
             'tipo_oro_id' => 'required_if:tipo_producto_id,1|nullable|exists:tipo_oros,id', // Asumo 1 es Oro
-            'empresa_id' => 'required|exists:empresas,id',
+            'empresa_id' => 'nullable|exists:empresas,id',
             'codigo_barras' => [
                 'nullable', 
                 'string', 
                 'max:255', 
                 Rule::unique('productos')->where(function ($query) use ($request) {
-                    return $query->where('empresa_id', $request->empresa_id);
+                    if ($request->empresa_id) {
+                        return $query->where('empresa_id', $request->empresa_id);
+                    }
+                    return $query->whereNull('empresa_id');
                 })
             ], 
             'precio_venta' => 'nullable|numeric|min:0',
@@ -205,7 +208,11 @@ class ProductoController extends Controller
                 'string', 
                 'max:255', 
                 Rule::unique('productos')->where(function ($query) use ($request, $producto) {
-                    return $query->where('empresa_id', $request->empresa_id ?? $producto->empresa_id);
+                   $empresaId = $request->empresa_id ?? $producto->empresa_id;
+                   if ($empresaId) {
+                       return $query->where('empresa_id', $empresaId);
+                   }
+                   return $query->whereNull('empresa_id');
                 })->ignore($producto->id)
             ],
             'precio_venta' => 'nullable|numeric|min:0',
