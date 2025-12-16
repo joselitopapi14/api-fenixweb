@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\UbicacionController;
 use App\Http\Controllers\Api\Factura\FacturaController as ApiFacturaController;
+use App\Http\Controllers\Api\ProductoController;
+use App\Http\Controllers\Api\ProductoImportController;
 use App\Models\TipoProducto;
 use App\Models\TipoOro;
 use App\Models\TipoMedida;
@@ -194,37 +196,19 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     });
 
-    // Productos
-    Route::get('/productos', function(Request $request) {
-        $query = Producto::with(['tipoProducto', 'tipoMedida', 'tipoProducto', 'tipoOro', 'impuestos'])
-            ->select('id', 'nombre', 'descripcion', 'tipo_producto_id', 'tipo_medida_id', 'precio_venta', 'codigo_barras', 'imagen');
-
-        if ($request->filled('empresa_id')) {
-            $query->where('empresa_id', $request->empresa_id);
-        }
-
-        return $query->get()->map(function($producto) {
-            return [
-                'id' => $producto->id,
-                'name' => $producto->nombre,
-
-                'descripcion' => $producto->descripcion,
-                'precio_venta' => $producto->precio_venta,
-                'codigo_barras' => $producto->codigo_barras,
-                'imagen' => $producto->imagen,
-                'imagen_url' => $producto->imagen ? asset('storage/' . $producto->imagen) : null,
-                'tipo_producto' => $producto->tipo_producto,
-                'tipo_oro' => $producto->tipo_oro,
-                'impuestos' => $producto->impuestos->map(function($impuesto) {
-                    return [
-                        'id' => $impuesto->id,
-                        'name' => $impuesto->name,
-                        'code' => $impuesto->code,
-                        'percentage' => $impuesto->pivot->porcentaje ?? 0,
-                    ];
-                })
-            ];
-        });
-    });
-
 });
+
+// Productos - Importación (Debe ir antes de resource para evitar conflicto con {id})
+Route::prefix('productos')->group(function () {
+    Route::get('export', [ProductoController::class, 'export']);
+    
+    Route::prefix('import')->group(function () {
+        Route::get('template', [ProductoImportController::class, 'template']);
+        Route::post('preview', [ProductoImportController::class, 'preview']);
+        Route::post('/', [ProductoImportController::class, 'import']); // POST /api/productos/import
+        Route::get('history', [ProductoImportController::class, 'history']);
+    });
+});
+
+// Productos - CRUD
+Route::apiResource('productos', ProductoController::class);

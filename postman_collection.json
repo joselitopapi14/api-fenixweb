@@ -446,6 +446,272 @@
                     }
                 }
             ]
+        },
+        {
+            "name": "Products Management",
+            "item": [
+                {
+                    "name": "1. Listar Productos",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/productos?page=1&per_page=10&sort=nombre_asc",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "productos"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "10"
+                                },
+                                {
+                                    "key": "sort",
+                                    "value": "nombre_asc"
+                                },
+                                {
+                                    "key": "search",
+                                    "value": "",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "empresa_id",
+                                    "value": "1",
+                                    "disabled": true
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2. Obtener Producto",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/productos/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "productos",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "3. Crear Producto",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"nombre\": \"Pulsera de Oro 14K\",\n    \"descripcion\": \"Pulsera de oro de 14 quilates con cierre de seguridad\",\n    \"tipo_producto_id\": 1,\n    \"tipo_oro_id\": 1,\n    \"empresa_id\": 1,\n    \"codigo_barras\": \"7891234567892\",\n    \"precio_venta\": 450.00,\n    \"precio_compra\": 350.00,\n    \"peso\": 8.5,\n    \"tipo_medida_id\": 1,\n    \"impuestos\": [1, 2]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/productos",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "productos"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "4. Actualizar Producto",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"nombre\": \"Anillo de Oro 18K Actualizado\",\n    \"descripcion\": \"Anillo de oro de 18 quilates con diseño moderno\",\n    \"precio_venta\": 380.00\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/productos/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "productos",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "5. Eliminar Producto",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/productos/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "productos",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "6. Exportar Productos",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/productos/export?empresa_id=1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "productos",
+                                "export"
+                            ],
+                            "query": [
+                                {
+                                    "key": "empresa_id",
+                                    "value": "1"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "7. Descargar Plantilla Importación",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/productos/import/template",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "productos",
+                                "import",
+                                "template"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "8. Previsualizar Importación",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "archivo",
+                                    "type": "file",
+                                    "src": []
+                                },
+                                {
+                                    "key": "empresa_id",
+                                    "value": "1",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/productos/import/preview",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "productos",
+                                "import",
+                                "preview"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "9. Importar Productos",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "archivo",
+                                    "type": "file",
+                                    "src": []
+                                },
+                                {
+                                    "key": "empresa_id",
+                                    "value": "1",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "modo_importacion",
+                                    "value": "crear_actualizar",
+                                    "type": "text",
+                                    "description": "Opciones: crear, actualizar, crear_actualizar"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/productos/import",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "productos",
+                                "import"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "10. Historial Importaciones",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/productos/import/history?page=1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "productos",
+                                "import",
+                                "history"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
         }
     ],
     "auth": {
