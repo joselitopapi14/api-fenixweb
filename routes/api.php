@@ -213,6 +213,9 @@ Route::prefix('productos')->group(function () {
         Route::post('/', [ProductoImportController::class, 'import']); // POST /api/productos/import
         Route::get('history', [ProductoImportController::class, 'history']);
     });
+    
+    // Explicit create route as requested
+    Route::post('create', [ProductoController::class, 'store']);
 });
 
 // Productos - CRUD

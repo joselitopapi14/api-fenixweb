@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use App\Exports\ProductosExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Http\Resources\ProductoResource;
+use App\Http\Resources\ProductoCollection;
 
 class ProductoController extends Controller
 {
@@ -84,10 +86,19 @@ class ProductoController extends Controller
         $perPage = $request->get('per_page', 10);
         $productos = $query->paginate($perPage);
 
-        // Transformar data si es necesario (Laravel resource sería ideal, pero arrays manuales también funcionan)
-        // Por ahora, devolveremos paginación standard de Laravel que ya es JSON friendly
+        // Stats calculation (Global or Enterprise scoped)
+        $statsQuery = Producto::query();
+        if ($request->filled('empresa_id')) {
+            $statsQuery->where('empresa_id', $request->empresa_id);
+        }
+
+        $stats = [
+            'total_productos' => $statsQuery->count(),
+            'productos_este_ano' => $statsQuery->clone()->whereYear('created_at', now()->year)->count(),
+            'productos_este_mes' => $statsQuery->clone()->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count(),
+        ];
         
-        return response()->json($productos);
+        return new ProductoCollection($productos, $stats);
     }
 
     /**
@@ -104,7 +115,7 @@ class ProductoController extends Controller
         // Verificar acceso a empresa si es necesario
         // ...
 
-        return response()->json(['data' => $producto]);
+        return new ProductoResource($producto);
     }
 
     /**
@@ -163,7 +174,7 @@ class ProductoController extends Controller
 
             return response()->json([
                 'message' => 'Producto creado exitosamente',
-                'data' => $producto->load(['tipoProducto', 'tipoOro', 'tipoMedida', 'empresa', 'impuestos'])
+                'data' => new ProductoResource($producto->load(['tipoProducto', 'tipoOro', 'tipoMedida', 'empresa', 'impuestos']))
             ], 201);
 
         } catch (\Exception $e) {
@@ -236,7 +247,7 @@ class ProductoController extends Controller
 
             return response()->json([
                 'message' => 'Producto actualizado exitosamente',
-                'data' => $producto->fresh()->load(['tipoProducto', 'tipoOro', 'tipoMedida', 'empresa', 'impuestos'])
+                'data' => new ProductoResource($producto->fresh()->load(['tipoProducto', 'tipoOro', 'tipoMedida', 'empresa', 'impuestos']))
             ], 200);
 
         } catch (\Exception $e) {

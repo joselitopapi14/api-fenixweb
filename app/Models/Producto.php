@@ -20,7 +20,8 @@ class Producto extends Model
         'codigo_barras',
         'precio_venta',
         'precio_compra',
-        'tipo_medida_id'
+        'tipo_medida_id',
+        'peso'
     ];
 
     protected $casts = [
