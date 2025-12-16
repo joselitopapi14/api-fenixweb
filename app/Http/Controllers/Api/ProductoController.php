@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use App\Exports\ProductosExport;
-use App\Exports\ProductosExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Resources\ProductoResource;
 use App\Http\Resources\ProductoCollection;

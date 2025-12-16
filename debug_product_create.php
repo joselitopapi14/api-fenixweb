@@ -16,16 +16,16 @@ try {
     if ($user) auth()->login($user);
 
     $data = [
-      "nombre" => "Anillo Test " . rand(100,999),
-      "descripcion" => "Desc",
+      "nombre" => "Anillo de Oro 18K",
+      "descripcion" => "Anillo de oro de 18 quilates con diseño clásico y elegante",
       "tipo_producto_id" => 1,
-      "tipo_oro_id" => 2, // Ensure ID 2 exists or pick one that exists
+      "tipo_oro_id" => 2,
       "empresa_id" => null,
-      "codigo_barras" => "TEST" . time(),
+      "codigo_barras" => "78917890" . rand(100, 999), // Unique
       "precio_venta" => 350.50,
       "precio_compra" => 280.00,
       "tipo_medida_id" => 1,
-      "impuestos" => []
+      "impuestos" => [1, 4]
     ];
 
     // Ensure dependent IDs exist
