@@ -17,6 +17,7 @@ class Factura extends Model
         'empresa_id',
         'medio_pago_id',
         'tipo_pago_id',
+        'tipo_pagos_id',
         'total',
         'valor_impuestos',
         'issue_date',
@@ -28,7 +29,7 @@ class Factura extends Model
         'subtotal',
         'estado',
         'xml_url',
-        'obseraciones'
+        'observaciones'
     ];
 
     protected $casts = [
