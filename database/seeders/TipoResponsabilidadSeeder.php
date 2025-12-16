@@ -9,17 +9,13 @@ class TipoResponsabilidadSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     * 
+     * NOTA: Los datos iniciales ya se insertan en la migración
+     * 2025_08_31_093605_create_tipo_responsabilidads_table.php
+     * Este seeder se mantiene vacío para evitar duplicación.
      */
     public function run(): void
     {
-        $tiposResponsabilidad = [
-            ['codigo' => 'O-13', 'nombre' => 'Gran Contribuyente', 'created_at' => now(), 'updated_at' => now()],
-            ['codigo' => 'O-15', 'nombre' => 'Autorretenedor', 'created_at' => now(), 'updated_at' => now()],
-            ['codigo' => 'O-23', 'nombre' => 'Agente de Retención IVA', 'created_at' => now(), 'updated_at' => now()],
-            ['codigo' => 'O-47', 'nombre' => 'Régimen Simple de Tributación', 'created_at' => now(), 'updated_at' => now()],
-            ['codigo' => 'R-99-PN', 'nombre' => 'No Responsable de IVA', 'created_at' => now(), 'updated_at' => now()],
-        ];
-
-        DB::table('tipo_responsabilidades')->insert($tiposResponsabilidad);
+        // Los datos ya están en la migración
     }
 }
