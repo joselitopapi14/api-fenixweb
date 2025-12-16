@@ -22,11 +22,49 @@ class FacturaController extends Controller
 {
     public function index(Request $request)
     {
-        // Simple pagination for standard listing
+        $query = Factura::with(['cliente:id,nombres,apellidos,razon_social,cedula_nit', 'tipoMovimiento:id,nombre', 'empresa:id,razon_social']);
+
+        // Filtro por Usuario/Rol (Seguridad y multi-tenancy)
+        $user = auth()->user();
+        if (!$user->esAdministradorGlobal()) {
+            $empresasIds = $user->empresasActivas->pluck('id');
+            $query->whereIn('empresa_id', $empresasIds);
+        }
+
+        // Filtro: Buscar (Número de factura o Cliente)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('numero_factura', 'ilike', "%{$search}%")
+                  ->orWhereHas('cliente', function ($q2) use ($search) {
+                      $q2->where('nombres', 'ilike', "%{$search}%")
+                         ->orWhere('apellidos', 'ilike', "%{$search}%")
+                         ->orWhere('razon_social', 'ilike', "%{$search}%")
+                         ->orWhere('cedula_nit', 'ilike', "%{$search}%");
+                  });
+            });
+        }
+
+        // Filtro: Estado
+        if ($request->filled('estado') && $request->estado !== 'Todos') {
+            $query->where('estado', $request->estado);
+        }
+
+        // Filtro: Fecha desde (Issue Date)
+        if ($request->filled('fecha_desde')) {
+            $query->whereDate('issue_date', '>=', $request->fecha_desde);
+        }
+        
+        // Filtro: Fecha hasta
+        if ($request->filled('fecha_hasta')) {
+            $query->whereDate('issue_date', '<=', $request->fecha_hasta);
+        }
+
+        // Ordenamiento
+        $query->orderBy('created_at', 'desc');
+
         $perPage = $request->get('per_page', 15);
-        $facturas = Factura::with(['cliente', 'tipoMovimiento'])
-            ->orderBy('created_at', 'desc')
-            ->paginate($perPage);
+        $facturas = $query->paginate($perPage);
 
         return response()->json($facturas);
     }
