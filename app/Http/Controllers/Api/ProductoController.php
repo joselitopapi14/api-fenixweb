@@ -11,9 +11,11 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use App\Exports\ProductosExport;
+use App\Exports\ProductosExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Resources\ProductoResource;
 use App\Http\Resources\ProductoCollection;
+use App\Models\Impuesto; // Added import
 
 class ProductoController extends Controller
 {
@@ -170,7 +172,13 @@ class ProductoController extends Controller
             $producto = Producto::create($data);
 
             if ($request->has('impuestos')) {
-                $producto->impuestos()->sync($request->impuestos);
+                $syncData = [];
+                $impuestos = Impuesto::with('impuestoPorcentajes')->findMany($request->impuestos);
+                foreach ($impuestos as $impuesto) {
+                    $porcentaje = $impuesto->impuestoPorcentajes->first()->percentage ?? 0;
+                    $syncData[$impuesto->id] = ['porcentaje' => $porcentaje];
+                }
+                $producto->impuestos()->sync($syncData);
             }
 
             DB::commit();
@@ -247,7 +255,13 @@ class ProductoController extends Controller
             $producto->update($data);
 
             if ($request->has('impuestos')) {
-                $producto->impuestos()->sync($request->impuestos);
+                $syncData = [];
+                $impuestos = Impuesto::with('impuestoPorcentajes')->findMany($request->impuestos);
+                foreach ($impuestos as $impuesto) {
+                    $porcentaje = $impuesto->impuestoPorcentajes->first()->percentage ?? 0;
+                    $syncData[$impuesto->id] = ['porcentaje' => $porcentaje];
+                }
+                $producto->impuestos()->sync($syncData);
             }
 
             DB::commit();
