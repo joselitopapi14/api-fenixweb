@@ -83,59 +83,80 @@ class FacturaController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Recepción y limpieza de datos
-        $request->offsetUnset('total');
-        $request->offsetUnset('subtotal');
-        $request->offsetUnset('valor_impuestos');
-        $this->cleanRequestData($request);
+        try {
+            // 1. Recepción y limpieza de datos
+            $request->offsetUnset('total');
+            $request->offsetUnset('subtotal');
+            $request->offsetUnset('valor_impuestos');
+            $this->cleanRequestData($request);
 
-        // Asignar vendedor_id
-        $request->merge(['user_id' => auth()->id() ?? $request->user_id]);
+            // Asignar vendedor_id
+            $request->merge(['user_id' => auth()->id() ?? $request->user_id]);
 
-        // 2. Validaciones básicas
-        $this->validateBasicData($request);
+            // 2. Validaciones básicas
+            $this->validateBasicData($request);
 
-        // 3. Validación de productos e impuestos
-        $this->validateTaxesProducts($request);
+            // 3. Validación de productos e impuestos
+            $this->validateTaxesProducts($request);
 
-        // 5. Generación de número de factura
-        $numeroFactura = $this->generateFacturaNumber($request);
+            // 5. Generación de número de factura
+            $numeroFactura = $this->generateFacturaNumber($request);
 
-        // 6. Cálculo de montos totales
-        $amounts = $this->calculateFacturaAmounts($request);
+            // 6. Cálculo de montos totales
+            $amounts = $this->calculateFacturaAmounts($request);
 
-        // 7. Validación de reglas de negocio
-        $this->validateBusinessRules($request, $amounts);
+            // 7. Validación de reglas de negocio
+            $this->validateBusinessRules($request, $amounts);
 
-        // 9. Transacción de base de datos
-        return DB::transaction(function () use ($request, $numeroFactura, $amounts) {
-            // Crear factura principal
-            $factura = Factura::create(array_merge($request->all(), [
-                'numero_factura' => $numeroFactura,
-                'subtotal' => $amounts['subtotal'],
-                'valor_impuestos' => $amounts['valor_impuestos'],
-                'total' => $amounts['total'],
-                'cambio' => $amounts['cambio'] ?? null,
-                'issue_date' => now()->toDateString(),
-                'estado' => 'creada',
-            ]));
+            // 9. Transacción de base de datos
+            return DB::transaction(function () use ($request, $numeroFactura, $amounts) {
+                // Crear factura principal
+                $factura = Factura::create(array_merge($request->all(), [
+                    'numero_factura' => $numeroFactura,
+                    'subtotal' => $amounts['subtotal'],
+                    'valor_impuestos' => $amounts['valor_impuestos'],
+                    'total' => $amounts['total'],
+                    'cambio' => $amounts['cambio'] ?? null,
+                    'issue_date' => now()->toDateString(),
+                    'estado' => 'creada',
+                ]));
 
-            // Guardar productos
-            $this->saveFacturaDetails($factura, $request->productos);
+                // Guardar productos
+                $this->saveFacturaDetails($factura, $request->productos);
 
-            // Guardar retenciones si aplica
-            if ($request->has('retenciones')) {
-                $this->saveFacturaRetenciones($factura, $request->retenciones, $amounts['total']);
-            }
+                // Guardar retenciones si aplica
+                if ($request->has('retenciones') && !empty($request->retenciones)) {
+                    $this->saveFacturaRetenciones($factura, $request->retenciones, $amounts['total']);
+                }
 
-            // Actualizar consecutivo
-            // $this->updateConsecutiveNumber($request->tipo_movimiento_id);
+                // Actualizar consecutivo
+                // $this->updateConsecutiveNumber($request->tipo_movimiento_id);
 
+                return response()->json([
+                    'message' => 'Factura creada exitosamente',
+                    'factura' => $factura->load(['facturaHasProducts.product', 'facturaHasRetenciones']),
+                ], 201);
+            });
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Error de validación al crear factura', [
+                'errors' => $e->errors(),
+                'request' => $request->all()
+            ]);
             return response()->json([
-                'message' => 'Factura creada exitosamente',
-                'factura' => $factura->load(['facturaHasProducts.product', 'facturaHasRetenciones']),
-            ], 201);
-        });
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Error al crear factura', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all()
+            ]);
+            return response()->json([
+                'message' => 'Error al crear la factura',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     private function cleanRequestData(Request $request)
