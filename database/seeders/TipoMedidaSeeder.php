@@ -13,44 +13,23 @@ class TipoMedidaSeeder extends Seeder
     public function run(): void
     {
         $tiposMedida = [
-            [
-                'nombre' => 'Unidad',
-                'abreviatura' => 'UND',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nombre' => 'Kilogramo',
-                'abreviatura' => 'KG',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nombre' => 'Gramo',
-                'abreviatura' => 'GR',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nombre' => 'Metro',
-                'abreviatura' => 'MT',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nombre' => 'Litro',
-                'abreviatura' => 'LT',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nombre' => 'Caja',
-                'abreviatura' => 'CJ',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+            ['nombre' => 'Unidad', 'abreviatura' => 'UND'],
+            ['nombre' => 'Kilogramo', 'abreviatura' => 'KG'],
+            ['nombre' => 'Gramo', 'abreviatura' => 'GR'],
+            ['nombre' => 'Metro', 'abreviatura' => 'MT'],
+            ['nombre' => 'Litro', 'abreviatura' => 'LT'],
+            ['nombre' => 'Caja', 'abreviatura' => 'CJ'],
         ];
 
-        DB::table('tipo_medidas')->insert($tiposMedida);
+        foreach ($tiposMedida as $tipo) {
+            \App\Models\TipoMedida::updateOrCreate(
+                ['nombre' => $tipo['nombre']],
+                [
+                    'abreviatura' => $tipo['abreviatura'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+        }
     }
 }
