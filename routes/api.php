@@ -75,34 +75,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // --- Core Data Endpoints ---
 
-    // Empresas
-    Route::get('/empresas', function () {
-        /** @var \App\Models\User $user */
-        $user = auth()->user();
-        
-        if (!$user) {
-            return response()->json([], 401);
-        }
-
-        // Verificar si es admin global
-        // Usamos try-catch interno por si Spatie falla, pero no bloqueamos todo el endpoint
-        $isAdmin = false;
-        try {
-            $isAdmin = $user->hasRole('role.admin');
-        } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('Error verificando rol admin: ' . $e->getMessage());
-        }
-
-        if ($isAdmin) {
-            return response()->json(Empresa::activas()->orderBy('razon_social')->get(['id', 'razon_social']));
-        } else {
-            if (method_exists($user, 'empresasActivas')) {
-                // FIXED: Column reference "id" is ambiguous. Specificamos la tabla.
-                return response()->json($user->empresasActivas()->get(['empresas.id', 'empresas.razon_social']));
-            }
-            return response()->json([]);
-        }
-    });
+    // Empresas - Full CRUD
+    Route::apiResource('empresas', \App\Http\Controllers\Api\EmpresaController::class);
 
     // Catalogos Generales
     Route::get('/tipos-producto', function () {
@@ -180,31 +154,8 @@ Route::middleware('auth:sanctum')->group(function () {
           });
     });
 
-    // Clientes
-    Route::get('/clientes', function() {
-        $empresaId = request('empresa_id');
-        return Cliente::when($empresaId, function($query, $empresaId) {
-            return $query->where('empresa_id', $empresaId);
-        })
-        ->select('id', 'nombres', 'apellidos', 'razon_social', 'cedula_nit', 'dv', 'tipo_documento_id', 'email', 'celular', 'direccion')
-        ->get()
-        ->map(function($cliente) {
-            return [
-                'id' => $cliente->id,
-                'name' => $cliente->nombre_completo ?? ($cliente->nombres . ' ' . $cliente->apellidos),
-                'nombre_completo' => $cliente->nombre_completo ?? ($cliente->nombres . ' ' . $cliente->apellidos),
-                'cedula_nit' => $cliente->cedula_nit,
-                'documento_completo' => $cliente->documento_completo ?? $cliente->cedula_nit,
-                'email' => $cliente->email,
-                'celular' => $cliente->celular,
-                'direccion' => $cliente->direccion,
-                'tipo_documento_id' => $cliente->tipo_documento_id
-            ];
-        });
-    });
-
-    // Clientes logic...
-    // ...
+    // Clientes - Full CRUD
+    Route::apiResource('clientes', \App\Http\Controllers\Api\ClienteController::class);
 
 
 // Productos - Importación (Debe ir antes de resource para evitar conflicto con {id})
