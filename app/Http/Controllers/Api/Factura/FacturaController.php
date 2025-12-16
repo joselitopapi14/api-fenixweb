@@ -20,6 +20,29 @@ use Illuminate\Support\Facades\Validator;
 
 class FacturaController extends Controller
 {
+    public function index(Request $request)
+    {
+        // Simple pagination for standard listing
+        $perPage = $request->get('per_page', 15);
+        $facturas = Factura::with(['cliente', 'tipoMovimiento'])
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+
+        return response()->json($facturas);
+    }
+
+    public function show($id)
+    {
+        $factura = Factura::with(['cliente', 'tipoMovimiento', 'facturaHasProducts.product', 'facturaHasRetenciones.retencion', 'vendedor'])
+            ->find($id);
+
+        if (!$factura) {
+            return response()->json(['message' => 'Factura no encontrada'], 404);
+        }
+
+        return response()->json($factura);
+    }
+
     public function store(Request $request)
     {
         // 1. Recepción y limpieza de datos

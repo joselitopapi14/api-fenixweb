@@ -124,8 +124,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // --- Facturacion API ---
     
-    Route::post('/facturas', [ApiFacturaController::class, 'store'])
-        ->middleware('permission:registros.create');
+    // --- Facturacion API ---
+    // Standardized CRUD for Facturas
+    Route::apiResource('facturas', ApiFacturaController::class);
 
     Route::get('/tipos-factura', function() {
         return TipoFactura::select('id', 'name', 'code')->get();
@@ -217,8 +218,8 @@ Route::prefix('productos')->group(function () {
         Route::get('history', [ProductoImportController::class, 'history']);
     });
     
-    // Explicit create route as requested
-    Route::post('create', [ProductoController::class, 'store']);
+    // Explicit create route REMOVED to enforce REST standard (use POST /productos)
+    // Route::post('create', [ProductoController::class, 'store']);
 });
 
 // Productos - CRUD
