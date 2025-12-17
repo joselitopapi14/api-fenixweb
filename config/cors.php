@@ -19,16 +19,25 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => [
+        'http://localhost:5173',
+        'http://localhost:3000',
+        'http://localhost:8080',
+        'https://web.fenix-crud.dev',
+        'https://fenix-crud.dev',
+    ],
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => [
+        '/^https?:\/\/localhost(:\d+)?$/',
+        '/^https?:\/\/.*\.fenix-crud\.dev$/',
+    ],
 
     'allowed_headers' => ['*'],
 
-    'exposed_headers' => [],
+    'exposed_headers' => ['Authorization'],
 
-    'max_age' => 0,
+    'max_age' => 86400, // 24 horas
 
-    'supports_credentials' => false,
+    'supports_credentials' => true,
 
 ];

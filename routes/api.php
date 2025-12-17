@@ -222,13 +222,37 @@ Route::prefix('productos')->group(function () {
         Route::post('/', [ProductoImportController::class, 'import']); // POST /api/productos/import
         Route::get('history', [ProductoImportController::class, 'history']);
     });
-    
-    // Explicit create route REMOVED to enforce REST standard (use POST /productos)
-    // Route::post('create', [ProductoController::class, 'store']);
 });
 
-// Productos - CRUD
+// Productos - CRUD (REST Standard)
 Route::apiResource('productos', ProductoController::class);
+
+// ========================================
+// Rutas de Compatibilidad para Frontend
+// ========================================
+// Estas rutas permiten que el frontend use /producto/create, /cliente/create, etc.
+// Son aliases a los métodos REST estándar
+
+Route::prefix('producto')->group(function () {
+    Route::post('create', [ProductoController::class, 'store']); // Alias de POST /productos
+    Route::get('{id}', [ProductoController::class, 'show']); // Alias de GET /productos/{id}
+    Route::put('{id}', [ProductoController::class, 'update']); // Alias de PUT /productos/{id}
+    Route::delete('{id}', [ProductoController::class, 'destroy']); // Alias de DELETE /productos/{id}
+});
+
+Route::prefix('cliente')->group(function () {
+    Route::post('create', [\App\Http\Controllers\Api\ClienteController::class, 'store']);
+    Route::get('{id}', [\App\Http\Controllers\Api\ClienteController::class, 'show']);
+    Route::put('{id}', [\App\Http\Controllers\Api\ClienteController::class, 'update']);
+    Route::delete('{id}', [\App\Http\Controllers\Api\ClienteController::class, 'destroy']);
+});
+
+Route::prefix('empresa')->group(function () {
+    Route::post('create', [\App\Http\Controllers\Api\EmpresaController::class, 'store']);
+    Route::get('{id}', [\App\Http\Controllers\Api\EmpresaController::class, 'show']);
+    Route::put('{id}', [\App\Http\Controllers\Api\EmpresaController::class, 'update']);
+    Route::delete('{id}', [\App\Http\Controllers\Api\EmpresaController::class, 'destroy']);
+});
 
 // Resoluciones de Facturación
 Route::post('resoluciones-facturacion/sincronizar', [ResolucionFacturacionController::class, 'sincronizar']);
