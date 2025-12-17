@@ -69,20 +69,23 @@ class RolesAndPermissionsSeeder extends Seeder
             }
         }
 
-        // Asignar rol al usuario principal si existe
-        // El usuario 1 suele ser el creado en UserSeeder o manualmente
-        $user = User::first(); // O find(1)
-        if ($user) {
-            // El modelo User tiene $guard_name = 'sanctum' hardcoded
-            // Por lo tanto, debemos asignar el rol que corresponda a 'sanctum'
-            // O Spatie intentará buscar el rol 'role.admin' para el guard 'sanctum' automáticamente.
-            
-            // Verificamos si podemos asignar directamente
-            // assignRole busca el rol por nombre. Si el usuario tiene guard 'sanctum', buscará 'role.admin' en 'sanctum'.
-            // Como ya creamos 'role.admin' para 'sanctum', esto debería funcionar sin errores.
-            if (! $user->hasRole('role.admin')) {
+        // Asignar rol admin a usuarios específicos
+        $adminEmails = [
+            'ggaleanoguerra@gmail.com',
+            'ronalabn@gmail.com'
+        ];
+
+        foreach ($adminEmails as $email) {
+            $user = User::where('email', $email)->first();
+            if ($user && !$user->hasRole('role.admin')) {
                 $user->assignRole('role.admin');
             }
+        }
+
+        // También asignar al primer usuario si existe y no está en la lista
+        $firstUser = User::first();
+        if ($firstUser && !in_array($firstUser->email, $adminEmails) && !$firstUser->hasRole('role.admin')) {
+            $firstUser->assignRole('role.admin');
         }
     }
 }
