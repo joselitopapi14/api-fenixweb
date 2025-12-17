@@ -69,11 +69,10 @@ class RolesAndPermissionsSeeder extends Seeder
             }
         }
 
-        // Asignar rol admin a usuarios específicos
-        $adminEmails = [
-            'ggaleanoguerra@gmail.com',
-            'ronalabn@gmail.com'
-        ];
+        // Asignar rol admin a usuarios específicos (configurable via env)
+        // Example: ADMIN_EMAILS="admin@acme.com,other@acme.com"
+        $adminEmailsRaw = (string) env('ADMIN_EMAILS', '');
+        $adminEmails = array_values(array_filter(array_map('trim', explode(',', $adminEmailsRaw))));
 
         foreach ($adminEmails as $email) {
             $user = User::where('email', $email)->first();
@@ -84,7 +83,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // También asignar al primer usuario si existe y no está en la lista
         $firstUser = User::first();
-        if ($firstUser && !in_array($firstUser->email, $adminEmails) && !$firstUser->hasRole('role.admin')) {
+        if ($firstUser && !in_array($firstUser->email, $adminEmails, true) && !$firstUser->hasRole('role.admin')) {
             $firstUser->assignRole('role.admin');
         }
     }
