@@ -104,21 +104,44 @@ Route::get('/municipios', function () {
 });
 
 Route::get('/comunas', function () {
-    $municipioId = request('municipio_id');
-    return response()->json(\App\Models\Comuna::when($municipioId, function($query, $municipioId) {
-        return $query->where('municipio_id', $municipioId);
-    })->orderBy('name')->get(['id', 'name', 'municipio_id']));
+    try {
+        $municipioId = request('municipio_id');
+        $query = \App\Models\Comuna::query();
+        
+        if ($municipioId) {
+            $query->where('municipio_id', $municipioId);
+        }
+        
+        return response()->json($query->orderBy('nombre')->get(['id', 'nombre', 'municipio_id']));
+    } catch (\Exception $e) {
+        \Log::error('Error en /comunas: ' . $e->getMessage());
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
 });
 
 Route::get('/barrios', function () {
-    $comunaId = request('comuna_id');
-    return response()->json(\App\Models\Barrio::when($comunaId, function($query, $comunaId) {
-        return $query->where('comuna_id', $comunaId);
-    })->orderBy('name')->get(['id', 'name', 'comuna_id']));
+    try {
+        $comunaId = request('comuna_id');
+        $query = \App\Models\Barrio::query();
+        
+        if ($comunaId) {
+            $query->where('comuna_id', $comunaId);
+        }
+        
+        return response()->json($query->orderBy('nombre')->get(['id', 'nombre', 'comuna_id']));
+    } catch (\Exception $e) {
+        \Log::error('Error en /barrios: ' . $e->getMessage());
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
 });
 
 Route::get('/redes-sociales', function () {
-    return response()->json(\App\Models\RedSocial::orderBy('nombre')->get(['id', 'nombre', 'icono']));
+    try {
+        return response()->json(\App\Models\RedSocial::orderBy('nombre')->get(['id', 'nombre', 'icono']));
+    } catch (\Exception $e) {
+        \Log::error('Error en /redes-sociales: ' . $e->getMessage());
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
 });
 
 // Rutas específicas de ubicación (mantener compatibilidad)
