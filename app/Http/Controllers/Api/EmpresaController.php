@@ -141,7 +141,7 @@ class EmpresaController extends Controller
 
             return response()->json([
                 'message' => 'Empresa creada exitosamente',
-                'empresa' => $empresa->load(['departamento', 'municipio', 'tipoPersona', 'tipoResponsabilidad', 'redesSociales'])
+                'empresa' => $empresa->load(['departamento', 'municipio', 'comuna', 'barrio'])
             ], 201);
         } catch (\Exception $e) {
             Log::error('Error al crear empresa', [

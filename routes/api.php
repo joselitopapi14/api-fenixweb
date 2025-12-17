@@ -234,13 +234,15 @@ Route::apiResource('productos', ProductoController::class);
 // Son aliases a los métodos REST estándar
 
 Route::prefix('producto')->group(function () {
-    Route::post('create', [ProductoController::class, 'store']); // Alias de POST /productos
+    Route::post('/', [ProductoController::class, 'store']); // POST /producto (sin create)
+    Route::post('create', [ProductoController::class, 'store']); // POST /producto/create
     Route::get('{id}', [ProductoController::class, 'show']); // Alias de GET /productos/{id}
     Route::put('{id}', [ProductoController::class, 'update']); // Alias de PUT /productos/{id}
     Route::delete('{id}', [ProductoController::class, 'destroy']); // Alias de DELETE /productos/{id}
 });
 
 Route::prefix('cliente')->group(function () {
+    Route::post('/', [\App\Http\Controllers\Api\ClienteController::class, 'store']);
     Route::post('create', [\App\Http\Controllers\Api\ClienteController::class, 'store']);
     Route::get('{id}', [\App\Http\Controllers\Api\ClienteController::class, 'show']);
     Route::put('{id}', [\App\Http\Controllers\Api\ClienteController::class, 'update']);
@@ -248,6 +250,7 @@ Route::prefix('cliente')->group(function () {
 });
 
 Route::prefix('empresa')->group(function () {
+    Route::post('/', [\App\Http\Controllers\Api\EmpresaController::class, 'store']);
     Route::post('create', [\App\Http\Controllers\Api\EmpresaController::class, 'store']);
     Route::get('{id}', [\App\Http\Controllers\Api\EmpresaController::class, 'show']);
     Route::put('{id}', [\App\Http\Controllers\Api\EmpresaController::class, 'update']);
