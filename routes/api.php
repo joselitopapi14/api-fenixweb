@@ -167,7 +167,27 @@ Route::middleware('auth:sanctum')->group(function () {
     // Auth Management
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('/user', function (Request $request) {
-        return $request->user();
+        try {
+            $user = $request->user();
+            return response()->json($user);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => explode("\n", $e->getTraceAsString())
+            ], 500);
+        }
+    });
+
+    // Endpoint de prueba simple
+    Route::get('/test-auth', function (Request $request) {
+        return response()->json([
+            'authenticated' => true,
+            'user_id' => auth()->id(),
+            'user_email' => auth()->user()->email ?? 'N/A',
+            'message' => 'Authentication working'
+        ]);
     });
 
     Route::get('/debug-permissions', function (Request $request) {
