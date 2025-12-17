@@ -107,27 +107,24 @@ class ClienteController extends Controller
             $validator = Validator::make($request->all(), [
                 'empresa_id' => 'required|exists:empresas,id',
                 'tipo_documento_id' => 'required|exists:tipo_documentos,id',
-                'tipo_persona_id' => 'required|exists:tipo_personas,id',
-                'tipo_responsabilidad_id' => 'required|exists:tipo_responsabilidades,id',
                 'cedula_nit' => 'required|string|max:20',
-                'dv' => 'nullable|string|max:1',
-                'nombres' => 'required_if:tipo_persona_id,1|nullable|string|max:255',
-                'apellidos' => 'required_if:tipo_persona_id,1|nullable|string|max:255',
-                'razon_social' => 'required_if:tipo_persona_id,2|nullable|string|max:255',
-                'email' => 'required|email|max:255',
-                'celular' => 'required|string|max:20',
-                'telefono_fijo' => 'nullable|string|max:20',
-                'direccion' => 'required|string|max:255',
+                'nombres' => 'required|string|max:100',
+                'apellidos' => 'required|string|max:100',
+                'fecha_nacimiento' => 'nullable|date',
+                'direccion' => 'nullable|string',
+                'telefono' => 'nullable|string|max:20',
+                'celular' => 'nullable|string|max:20',
+                'email' => 'nullable|email',
                 'departamento_id' => 'nullable|exists:departamentos,id',
                 'municipio_id' => 'nullable|exists:municipios,id',
                 'comuna_id' => 'nullable|exists:comunas,id',
                 'barrio_id' => 'nullable|exists:barrios,id',
-                'fecha_nacimiento' => 'nullable|date',
-                'representante_legal' => 'nullable|string|max:255',
-                'cedula_representante' => 'nullable|string|max:20',
-                'email_representante' => 'nullable|email|max:255',
-                'direccion_representante' => 'nullable|string|max:255',
-                'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'tipo_persona_id' => 'nullable|exists:tipo_personas,id',
+                'tipo_responsabilidad_id' => 'nullable|exists:tipo_responsabilidades,id',
+                'foto' => 'nullable|image|max:2048',
+                'redes_sociales' => 'nullable|array',
+                'redes_sociales.*.red_social_id' => 'required|exists:redes_sociales,id',
+                'redes_sociales.*.usuario' => 'required|string|max:255',
             ]);
 
             if ($validator->fails()) {
@@ -156,7 +153,7 @@ class ClienteController extends Controller
                 ], 422);
             }
 
-            $data = $request->except(['foto']);
+            $data = $request->except(['foto', 'redes_sociales']);
 
             // Manejar subida de foto
             if ($request->hasFile('foto')) {
@@ -166,6 +163,17 @@ class ClienteController extends Controller
 
             $cliente = Cliente::create($data);
 
+            // Manejar redes sociales
+            if ($request->has('redes_sociales') && is_array($request->redes_sociales)) {
+                $redesSociales = [];
+                foreach ($request->redes_sociales as $redSocial) {
+                    $redesSociales[$redSocial['red_social_id']] = [
+                        'usuario_red_social' => $redSocial['usuario']
+                    ];
+                }
+                $cliente->redesSociales()->sync($redesSociales);
+            }
+
             return response()->json([
                 'message' => 'Cliente creado exitosamente',
                 'cliente' => $cliente->load([
@@ -173,7 +181,8 @@ class ClienteController extends Controller
                     'tipoPersona',
                     'tipoResponsabilidad',
                     'departamento',
-                    'municipio'
+                    'municipio',
+                    'redesSociales'
                 ])
             ], 201);
         } catch (\Exception $e) {
@@ -252,26 +261,20 @@ class ClienteController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'tipo_documento_id' => 'sometimes|required|exists:tipo_documentos,id',
-                'tipo_persona_id' => 'sometimes|required|exists:tipo_personas,id',
-                'tipo_responsabilidad_id' => 'sometimes|required|exists:tipo_responsabilidades,id',
                 'cedula_nit' => 'sometimes|required|string|max:20',
-                'dv' => 'nullable|string|max:1',
-                'nombres' => 'nullable|string|max:255',
-                'apellidos' => 'nullable|string|max:255',
-                'razon_social' => 'nullable|string|max:255',
-                'email' => 'sometimes|required|email|max:255',
-                'celular' => 'sometimes|required|string|max:20',
-                'telefono_fijo' => 'nullable|string|max:20',
-                'direccion' => 'sometimes|required|string|max:255',
+                'nombres' => 'nullable|string|max:100',
+                'apellidos' => 'nullable|string|max:100',
+                'fecha_nacimiento' => 'nullable|date',
+                'direccion' => 'nullable|string',
+                'telefono' => 'nullable|string|max:20',
+                'celular' => 'nullable|string|max:20',
+                'email' => 'nullable|email',
                 'departamento_id' => 'nullable|exists:departamentos,id',
                 'municipio_id' => 'nullable|exists:municipios,id',
                 'comuna_id' => 'nullable|exists:comunas,id',
                 'barrio_id' => 'nullable|exists:barrios,id',
-                'fecha_nacimiento' => 'nullable|date',
-                'representante_legal' => 'nullable|string|max:255',
-                'cedula_representante' => 'nullable|string|max:20',
-                'email_representante' => 'nullable|email|max:255',
-                'direccion_representante' => 'nullable|string|max:255',
+                'tipo_persona_id' => 'nullable|exists:tipo_personas,id',
+                'tipo_responsabilidad_id' => 'nullable|exists:tipo_responsabilidades,id',
                 'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 

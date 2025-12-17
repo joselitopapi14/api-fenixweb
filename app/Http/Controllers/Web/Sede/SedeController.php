@@ -112,15 +112,16 @@ class SedeController extends Controller
         }
 
         $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string',
             'direccion' => 'required|string',
             'telefono' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:255',
-            'departamento_id' => 'required|exists:departamentos,id',
-            'municipio_id' => 'required|exists:municipios,id',
+            'email' => 'nullable|email',
+            'departamento_id' => 'nullable|exists:departamentos,id',
+            'municipio_id' => 'nullable|exists:municipios,id',
             'comuna_id' => 'nullable|exists:comunas,id',
             'barrio_id' => 'nullable|exists:barrios,id',
             'es_principal' => 'boolean',
+            'activa' => 'boolean',
             'observaciones' => 'nullable|string',
         ]);
 
@@ -216,12 +217,12 @@ class SedeController extends Controller
         }
 
         $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string',
             'direccion' => 'required|string',
             'telefono' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:255',
-            'departamento_id' => 'required|exists:departamentos,id',
-            'municipio_id' => 'required|exists:municipios,id',
+            'email' => 'nullable|email',
+            'departamento_id' => 'nullable|exists:departamentos,id',
+            'municipio_id' => 'nullable|exists:municipios,id',
             'comuna_id' => 'nullable|exists:comunas,id',
             'barrio_id' => 'nullable|exists:barrios,id',
             'es_principal' => 'boolean',

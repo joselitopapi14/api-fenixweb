@@ -66,31 +66,34 @@ class EmpresaController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'nit' => 'required|string|max:20|unique:empresas,nit',
-                'dv' => 'required|string|max:1',
-                'razon_social' => 'required|string|max:255',
-                'direccion' => 'required|string|max:255',
-                'telefono_fijo' => 'nullable|string|max:20',
-                'celular' => 'nullable|string|max:20',
-                'email' => 'required|email|max:255',
-                'pagina_web' => 'nullable|url|max:255',
-                'departamento_id' => 'nullable|exists:departamentos,id',
-                'municipio_id' => 'nullable|exists:municipios,id',
-                'comuna_id' => 'nullable|exists:comunas,id',
-                'barrio_id' => 'nullable|exists:barrios,id',
-                'tipo_persona_id' => 'required|exists:tipo_personas,id',
-                'tipo_responsabilidad_id' => 'required|exists:tipo_responsabilidades,id',
-                'tipo_documento_id' => 'required|exists:tipo_documentos,id',
-                'representante_legal' => 'nullable|string|max:255',
-                'cedula_representante' => 'nullable|string|max:20',
-                'email_representante' => 'nullable|email|max:255',
-                'direccion_representante' => 'nullable|string|max:255',
-                'software_id' => 'nullable|string|max:255',
-                'software_pin' => 'nullable|string|max:255',
-                'certificate_password' => 'nullable|string|max:255',
-                'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'certificate_path' => 'nullable|file|mimes:p12,pfx|max:5120',
-                'activa' => 'boolean',
+                            'nit' => 'required|string|max:20|unique:empresas,nit',
+            'dv' => 'required|string|size:1',
+            'razon_social' => 'required|string|max:255',
+            'direccion' => 'required|string',
+            'departamento_id' => 'required|exists:departamentos,id',
+            'municipio_id' => 'required|exists:municipios,id',
+            'comuna_id' => 'nullable|exists:comunas,id',
+            'barrio_id' => 'nullable|exists:barrios,id',
+            'tipo_persona_id' => 'nullable|exists:tipo_personas,id',
+            'tipo_responsabilidad_id' => 'nullable|exists:tipo_responsabilidades,id',
+            'tipo_documento_id' => 'nullable|exists:tipo_documentos,id',
+            'telefono_fijo' => 'nullable|string|max:20',
+            'celular' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'pagina_web' => 'nullable|url|max:255',
+            'software_id' => 'nullable|string|max:255',
+            'software_pin' => 'nullable|string|max:255',
+            // certificate: validate as file here; extension/mime validated manually later
+            'certificate' => 'nullable|file|max:5120',
+            'certificate_password' => 'nullable|string|max:255',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'representante_legal' => 'required|string|max:255',
+            'cedula_representante' => 'required|string|max:20',
+            'email_representante' => 'nullable|email|max:255',
+            'direccion_representante' => 'required|string',
+            'redes_sociales' => 'nullable|array',
+            'redes_sociales.*.red_social_id' => 'required|exists:redes_sociales,id',
+            'redes_sociales.*.usuario' => 'required|string|max:255',
             ]);
 
             if ($validator->fails()) {
@@ -100,7 +103,7 @@ class EmpresaController extends Controller
                 ], 422);
             }
 
-            $data = $request->except(['logo', 'certificate_path']);
+            $data = $request->except(['logo', 'certificate', 'redes_sociales']);
 
             // Manejar subida de logo
             if ($request->hasFile('logo')) {
@@ -109,12 +112,23 @@ class EmpresaController extends Controller
             }
 
             // Manejar subida de certificado
-            if ($request->hasFile('certificate_path')) {
-                $certPath = $request->file('certificate_path')->store('empresas/certificates', 'private');
+            if ($request->hasFile('certificate')) {
+                $certPath = $request->file('certificate')->store('empresas/certificates', 'private');
                 $data['certificate_path'] = $certPath;
             }
 
             $empresa = Empresa::create($data);
+
+            // Manejar redes sociales
+            if ($request->has('redes_sociales') && is_array($request->redes_sociales)) {
+                $redesSociales = [];
+                foreach ($request->redes_sociales as $redSocial) {
+                    $redesSociales[$redSocial['red_social_id']] = [
+                        'usuario_red_social' => $redSocial['usuario']
+                    ];
+                }
+                $empresa->redesSociales()->sync($redesSociales);
+            }
 
             // Si el usuario actual no es admin global, asociarlo como administrador de la empresa
             $user = auth()->user();
@@ -127,7 +141,7 @@ class EmpresaController extends Controller
 
             return response()->json([
                 'message' => 'Empresa creada exitosamente',
-                'empresa' => $empresa->load(['departamento', 'municipio', 'tipoPersona', 'tipoResponsabilidad'])
+                'empresa' => $empresa->load(['departamento', 'municipio', 'tipoPersona', 'tipoResponsabilidad', 'redesSociales'])
             ], 201);
         } catch (\Exception $e) {
             Log::error('Error al crear empresa', [
