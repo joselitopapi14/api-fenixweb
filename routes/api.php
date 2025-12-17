@@ -42,6 +42,31 @@ use App\Models\Departamento;
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
+// Endpoints de prueba (SIN autenticación) - TEMPORAL para debugging
+Route::get('/test/tipos-persona', function () {
+    try {
+        return response()->json(TipoPersona::orderBy('name')->get(['id', 'name', 'code']));
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()], 500);
+    }
+});
+
+Route::get('/test/tipos-responsabilidad', function () {
+    try {
+        return response()->json(\App\Models\TipoResponsabilidad::orderBy('name')->get(['id', 'name', 'code']));
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()], 500);
+    }
+});
+
+Route::get('/test/tipos-documento', function () {
+    try {
+        return response()->json(\App\Models\TipoDocumento::orderBy('name')->get(['id', 'name', 'code']));
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()], 500);
+    }
+});
+
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
     
