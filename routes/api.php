@@ -107,15 +107,15 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Catálogos para Empresas
     Route::get('/tipos-persona', function () {
-        return response()->json(\App\Models\TipoPersona::orderBy('nombre')->get(['id', 'nombre', 'codigo']));
+        return response()->json(\App\Models\TipoPersona::orderBy('name')->get(['id', 'name', 'code']));
     });
 
     Route::get('/tipos-responsabilidad', function () {
-        return response()->json(\App\Models\TipoResponsabilidad::orderBy('nombre')->get(['id', 'nombre', 'codigo']));
+        return response()->json(\App\Models\TipoResponsabilidad::orderBy('name')->get(['id', 'name', 'code']));
     });
 
     Route::get('/tipos-documento', function () {
-        return response()->json(\App\Models\TipoDocumento::orderBy('nombre')->get(['id', 'nombre', 'codigo']));
+        return response()->json(\App\Models\TipoDocumento::orderBy('name')->get(['id', 'name', 'code']));
     });
 
     Route::get('/departamentos', function () {

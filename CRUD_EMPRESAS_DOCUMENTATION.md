@@ -236,19 +236,19 @@ DELETE /api/empresas/{id}
 ```http
 GET /api/tipos-persona
 ```
-**Respuesta:** `[{id, nombre, codigo}]`
+**Respuesta:** `[{id, name, code}]`
 
 ### 2. Tipos de Responsabilidad
 ```http
 GET /api/tipos-responsabilidad
 ```
-**Respuesta:** `[{id, nombre, codigo}]`
+**Respuesta:** `[{id, name, code}]`
 
 ### 3. Tipos de Documento
 ```http
 GET /api/tipos-documento
 ```
-**Respuesta:** `[{id, nombre, codigo}]`
+**Respuesta:** `[{id, name, code}]`
 
 ### 4. Departamentos
 ```http
@@ -259,9 +259,20 @@ GET /api/departamentos
 ### 5. Ubicación Jerárquica
 ```http
 GET /api/departamentos/{id}/municipios
+```
+**Respuesta:** `[{id, name, code, departamento_id}]`
+
+```http
 GET /api/municipios/{id}/comunas
+```
+**Respuesta:** `[{id, nombre, municipio_id}]`
+
+```http
 GET /api/comunas/{id}/barrios
 ```
+**Respuesta:** `[{id, nombre, comuna_id}]`
+
+**Nota:** Departamentos y municipios usan `name`, mientras que comunas y barrios usan `nombre`.
 
 ---
 
