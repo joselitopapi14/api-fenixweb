@@ -146,6 +146,21 @@ Route::get('/resoluciones', function() {
       });
 });
 
+// ENDPOINT DE PRUEBA - Crear empresa SIN autenticación (TEMPORAL)
+Route::post('/test/crear-empresa', function(Request $request) {
+    try {
+        $empresaController = new \App\Http\Controllers\Api\EmpresaController();
+        return $empresaController->store($request);
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
+        ], 500);
+    }
+});
+
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
     
