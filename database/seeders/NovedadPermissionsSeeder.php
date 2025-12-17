@@ -22,12 +22,12 @@ class NovedadPermissionsSeeder extends Seeder
         foreach ($permissions as $name => $description) {
             Permission::firstOrCreate(
                 ['name' => $name],
-                ['description' => $description, 'guard_name' => 'sanctum']
+                ['description' => $description]
             );
         }
 
         // Asignar permisos al rol de admin (si existe)
-        $adminRole = Role::where('name', 'role.admin')->where('guard_name', 'sanctum')->first();
+        $adminRole = Role::where('name', 'admin')->first();
         if ($adminRole) {
             $adminRole->givePermissionTo(array_keys($permissions));
             $this->command->info('Permisos de novedades asignados al rol admin');

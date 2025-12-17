@@ -21,6 +21,11 @@ class CreateTipoPagosTable extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        DB::table('tipo_pagos')->insert([
+            ['name' => 'Contado', 'code' => '1'],
+            ['name' => 'Crédito', 'code' => '2'],
+        ]);
     }
 
     /**

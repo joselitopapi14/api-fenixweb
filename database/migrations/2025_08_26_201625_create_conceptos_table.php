@@ -23,6 +23,17 @@ return new class extends Migration
             $table->index(['empresa_id', 'activo']);
             $table->index('nombre');
         });
+
+        DB::table('conceptos')->insert([
+            ['nombre' => 'Nómina', 'descripcion' => 'Sin descripción', 'activo' => true, 'empresa_id' => null, 'created_at' => now(), 'updated_at' => now()],
+            ['nombre' => 'Arriendo', 'descripcion' => 'Sin descripción', 'activo' => true, 'empresa_id' => null, 'created_at' => now(), 'updated_at' => now()],
+            ['nombre' => 'Cafeteria', 'descripcion' => 'Sin descripción', 'activo' => true, 'empresa_id' => null, 'created_at' => now(), 'updated_at' => now()],
+            ['nombre' => 'Uniformes', 'descripcion' => 'Sin descripción', 'activo' => true, 'empresa_id' => null, 'created_at' => now(), 'updated_at' => now()],
+            ['nombre' => 'Servicios Públicos', 'descripcion' => 'Sin descripción', 'activo' => true, 'empresa_id' => null, 'created_at' => now(), 'updated_at' => now()],
+            ['nombre' => 'Administración', 'descripcion' => 'Sin descripción', 'activo' => true, 'empresa_id' => null, 'created_at' => now(), 'updated_at' => now()],
+            ['nombre' => 'Créditos', 'descripcion' => 'Sin descripción', 'activo' => true, 'empresa_id' => null, 'created_at' => now(), 'updated_at' => now()],
+            ['nombre' => 'Representación', 'descripcion' => 'Sin descripción', 'activo' => true, 'empresa_id' => null, 'created_at' => now(), 'updated_at' => now()],
+        ]);
     }
 
     /**

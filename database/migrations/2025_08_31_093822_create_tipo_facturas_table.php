@@ -19,6 +19,17 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        DB::table('tipo_facturas')->insert([
+            ['name' => 'Factura electrónica de Venta', 'code' => '01'],
+            ['name' => 'Factura electrónica de venta ‐exportación', 'code' => '02'],
+            ['name' => 'Instrumento electrónico de transmisión – tipo 03', 'code' => '03'],
+            ['name' => 'Factura electrónica de Venta ‐ tipo 04', 'code' => '04'],
+            ['name' => 'Nota Crédito', 'code' => '91'],
+            ['name' => 'Nota Débito', 'code' => '92'],
+            ['name' => 'Eventos (ApplicationResponse)', 'code' => '96'],
+
+        ]);
     }
 
     /**

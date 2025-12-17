@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use App\Models\User;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -124,57 +125,9 @@ return new class extends Migration {
             $table->primary([$pivotPermission, $pivotRole], 'role_has_permissions_permission_id_role_id_primary');
         });
 
-        // Crear permisos
-        $permissions = [
-            ['id' => 1, 'name' => 'dashboard.view', 'guard_name' => 'sanctum'],
-            ['id' => 2, 'name' => 'users.view', 'guard_name' => 'sanctum'],
-            ['id' => 3, 'name' => 'users.create', 'guard_name' => 'sanctum'],
-            ['id' => 4, 'name' => 'users.edit', 'guard_name' => 'sanctum'],
-            ['id' => 5, 'name' => 'users.delete', 'guard_name' => 'sanctum'],
-            ['id' => 6, 'name' => 'roles.view', 'guard_name' => 'sanctum'],
-            ['id' => 7, 'name' => 'roles.create', 'guard_name' => 'sanctum'],
-            ['id' => 8, 'name' => 'roles.edit', 'guard_name' => 'sanctum'],
-            ['id' => 9, 'name' => 'roles.delete', 'guard_name' => 'sanctum'],
-            ['id' => 10, 'name' => 'config.show', 'guard_name' => 'sanctum'],
-            ['id' => 11, 'name' => 'reports.view', 'guard_name' => 'sanctum'],
-            ['id' => 12, 'name' => 'analytics.view', 'guard_name' => 'sanctum'],
-            ['id' => 13, 'name' => 'registros.view', 'guard_name' => 'sanctum'],
-            ['id' => 14, 'name' => 'registros.create', 'guard_name' => 'sanctum'],
-            ['id' => 15, 'name' => 'registros.edit', 'guard_name' => 'sanctum'],
-            ['id' => 16, 'name' => 'registros.delete', 'guard_name' => 'sanctum'],
-        ];
 
-        foreach ($permissions as $permissionData) {
-            Permission::firstOrCreate($permissionData);
-        }
-
-        // Crear roles
-        $roles = [
-            ['id' => 1, 'name' => 'role.admin', 'guard_name' => 'sanctum'],
-            ['id' => 2, 'name' => 'role.employee', 'guard_name' => 'sanctum'],
-            ['id' => 3, 'name' => 'role.supervisor1', 'guard_name' => 'sanctum'],
-            ['id' => 4, 'name' => 'role.candidatos', 'guard_name' => 'sanctum'],
-            ['id' => 5, 'name' => 'role.lider', 'guard_name' => 'sanctum'],
-            ['id' => 6, 'name' => 'role.call', 'guard_name' => 'sanctum'],
-            ['id' => 7, 'name' => 'role.digitador', 'guard_name' => 'sanctum'],
-        ];
-
-        foreach ($roles as $roleData) {
-            Role::firstOrCreate($roleData);
-        }
-
-        // Obtener el rol admin
-        $role = Role::where('name', 'role.admin')->first();
-
-        // Asignar todos los permisos al rol admin
-        $role->syncPermissions(Permission::all());
-
-        // NOTE: La asignación de roles a usuarios se hace en el UserSeeder
-        // ya que los usuarios aún no existen durante las migraciones
-
-        app('cache')
-            ->store(config('permission.cache.store') != 'default' ? config('permission.cache.store') : null)
-            ->forget(config('permission.cache.key'));
+        // Se ha movido la creación de permisos y roles al seeder Database\Seeders\RolesAndPermissionsSeeder
+        // para evitar errores durante la migración y dependencias de modelos.
     }
 
     /**

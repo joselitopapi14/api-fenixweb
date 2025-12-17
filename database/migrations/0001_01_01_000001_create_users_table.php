@@ -3,6 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\User;
+
 
 return new class extends Migration
 {
@@ -35,6 +37,18 @@ return new class extends Migration
             $table->text('user_agent')->nullable();
             $table->longText('payload');
             $table->integer('last_activity')->index();
+        });
+
+        Schema::table('users', function (Blueprint $table) {
+            User::firstOrCreate(
+            ['name' => 'Gabriel Galeano Guerra'],
+            ['email' => 'ggaleanoguerra@gmail.com', 'password' => Hash::make('Thegamechanger1*')]
+            );
+
+            User::firstOrCreate(
+            ['name' => 'Ronal Blanquicett'],
+            ['email' => 'ronalabn@gmail.com', 'password' => Hash::make('Ronal2025*')]
+            );
         });
     }
 

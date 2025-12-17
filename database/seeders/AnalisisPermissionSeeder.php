@@ -23,18 +23,18 @@ class AnalisisPermissionSeeder extends Seeder
         foreach ($analisisPermissions as $name => $description) {
             Permission::firstOrCreate(
                 ['name' => $name],
-                ['guard_name' => 'sanctum']
+                ['guard_name' => 'web']
             );
         }
 
         // Asignar permisos al rol de admin
-        $adminRole = Role::where('name', 'role.admin')->where('guard_name', 'sanctum')->first();
+        $adminRole = Role::where('name', 'role.admin')->first();
         if ($adminRole) {
             $adminRole->givePermissionTo(array_keys($analisisPermissions));
         }
 
         // También podemos asignar a otros roles si existen
-        $userRole = Role::where('name', 'role.user')->where('guard_name', 'sanctum')->first();
+        $userRole = Role::where('name', 'role.user')->first();
         if ($userRole) {
             $userRole->givePermissionTo('analisis.view');
         }
