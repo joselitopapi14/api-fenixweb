@@ -137,7 +137,7 @@ Route::get('/barrios', function () {
 
 Route::get('/redes-sociales', function () {
     try {
-        return response()->json(\App\Models\RedSocial::orderBy('nombre')->get(['id', 'nombre', 'icono']));
+        return response()->json(\App\Models\RedSocial::orderBy('nombre')->get(['id', 'nombre']));
     } catch (\Exception $e) {
         \Log::error('Error en /redes-sociales: ' . $e->getMessage());
         return response()->json(['error' => $e->getMessage()], 500);
