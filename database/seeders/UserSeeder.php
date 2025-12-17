@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
             ]
         );
 
-        User::firstOrCreate(
+        $ronalUser = User::firstOrCreate(
             ['email' => 'ronalabn@gmail.com'],
             [
                 'name' => 'Ronal Blanquicett',
@@ -30,7 +30,7 @@ class UserSeeder extends Seeder
             ]
         );
 
-        User::firstOrCreate(
+        $joseUser = User::firstOrCreate(
             ['email' => 'enriquejo2002@gmail.com'],
             [
                 'name' => 'Jose Otero',
@@ -38,15 +38,18 @@ class UserSeeder extends Seeder
             ]
         );
 
-        // Asignar rol de admin al primer usuario y al tercero (Jose Otero)
+        // Asignar rol de admin a los 3 usuarios
         $adminRole = Role::where('name', 'role.admin')->first();
         if ($adminRole) {
-            if ($adminUser) {
+            if ($adminUser && !$adminUser->hasRole($adminRole)) {
                 $adminUser->assignRole($adminRole);
             }
             
-            $joseUser = User::where('email', 'enriquejo2002@gmail.com')->first();
-            if ($joseUser) {
+            if ($ronalUser && !$ronalUser->hasRole($adminRole)) {
+                $ronalUser->assignRole($adminRole);
+            }
+            
+            if ($joseUser && !$joseUser->hasRole($adminRole)) {
                 $joseUser->assignRole($adminRole);
             }
         }

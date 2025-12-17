@@ -21,13 +21,6 @@ class CreateTipoRetencionsTable extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-
-        DB::table('tipo_retenciones')->insert([
-            ['name' => 'ReteIVA', 'code' => '05', 'impuesto_id' => 1],
-            ['name' => 'ReteRenta', 'code' => '06', 'impuesto_id' => null],
-            ['name' => 'ReteFuente', 'code' => '06', 'impuesto_id' => null],
-            ['name' => 'ReteICA', 'code' => '07', 'impuesto_id' => 3],
-        ]);
     }
 
     /**

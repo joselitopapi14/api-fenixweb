@@ -41,9 +41,9 @@ class DatabaseSeeder extends Seeder
             TipoFacturaSeeder::class,
             MedioPagoSeeder::class,
             TipoPagoSeeder::class,
-            TipoRetencionSeeder::class,
-            ConceptoRetencionSeeder::class,
-            ImpuestoSeeder::class,
+            ImpuestoSeeder::class,  // Debe ir ANTES de TipoRetencionSeeder
+            TipoRetencionSeeder::class,  // Depende de Impuestos
+            ConceptoRetencionSeeder::class,  // Depende de TipoRetencion
         ]);
         
         // Catálogos de productos

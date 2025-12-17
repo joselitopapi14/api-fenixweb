@@ -13,30 +13,10 @@ class TipoRetencionSeeder extends Seeder
     public function run(): void
     {
         $tiposRetencion = [
-            [
-                'name' => 'ReteIVA',
-                'code' => '05',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'ReteICA',
-                'code' => '07',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'ReteFuente',
-                'code' => '06',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'ReteRenta',
-                'code' => '01',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+            ['name' => 'ReteIVA', 'code' => '05', 'impuesto_id' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'ReteRenta', 'code' => '06', 'impuesto_id' => null, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'ReteFuente', 'code' => '06', 'impuesto_id' => null, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'ReteICA', 'code' => '07', 'impuesto_id' => 3, 'created_at' => now(), 'updated_at' => now()],
         ];
 
         DB::table('tipo_retenciones')->insert($tiposRetencion);

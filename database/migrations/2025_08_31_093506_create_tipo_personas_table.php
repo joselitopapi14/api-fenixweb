@@ -18,11 +18,6 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
         });
-
-        DB::table('tipo_personas')->insert([
-            ['name' => 'Persona Natural', 'code' => '2'],
-            ['name' => 'Persona Jurídica', 'code' => '1'],
-        ]);
     }
 
     /**

@@ -9,13 +9,12 @@ class TipoPersonaSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * 
-     * NOTA: Los datos iniciales ya se insertan en la migración
-     * 2025_08_31_093506_create_tipo_personas_table.php
-     * Este seeder se mantiene vacío para evitar duplicación.
      */
     public function run(): void
     {
-        // Los datos ya están en la migración
+        DB::table('tipo_personas')->insert([
+            ['name' => 'Persona Natural', 'code' => '2', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Persona Jurídica', 'code' => '1', 'created_at' => now(), 'updated_at' => now()],
+        ]);
     }
 }
