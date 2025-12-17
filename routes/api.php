@@ -22,6 +22,10 @@ use App\Models\ResolucionFacturacion;
 use App\Models\Cliente;
 use App\Models\Producto;
 use App\Models\Impuesto;
+use App\Models\TipoPersona;
+use App\Models\TipoResponsabilidad;
+use App\Models\TipoDocumento;
+use App\Models\Departamento;
 
 /*
 |--------------------------------------------------------------------------
@@ -89,6 +93,33 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/tipos-medida', function () {
         return response()->json(TipoMedida::orderBy('nombre')->get(['id', 'nombre', 'abreviatura']));
+    });
+
+    Route::get('/tipos-movimiento', function () {
+        $empresaId = request('empresa_id');
+        return response()->json(\App\Models\TipoMovimiento::activos()
+            ->when($empresaId, function($query, $empresaId) {
+                return $query->where('empresa_id', $empresaId);
+            })
+            ->orderBy('nombre')
+            ->get(['id', 'nombre', 'es_suma', 'descripcion', 'empresa_id']));
+    });
+
+    // Catálogos para Empresas
+    Route::get('/tipos-persona', function () {
+        return response()->json(\App\Models\TipoPersona::orderBy('nombre')->get(['id', 'nombre', 'codigo']));
+    });
+
+    Route::get('/tipos-responsabilidad', function () {
+        return response()->json(\App\Models\TipoResponsabilidad::orderBy('nombre')->get(['id', 'nombre', 'codigo']));
+    });
+
+    Route::get('/tipos-documento', function () {
+        return response()->json(\App\Models\TipoDocumento::orderBy('nombre')->get(['id', 'nombre', 'codigo']));
+    });
+
+    Route::get('/departamentos', function () {
+        return response()->json(\App\Models\Departamento::orderBy('name')->get(['id', 'name', 'code']));
     });
 
     // Ubicacion

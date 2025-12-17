@@ -1,224 +1,395 @@
-# CRUD de Empresas - Implementación Completa
+# Documentación CRUD de Empresas
 
-## ✅ Implementado
-
-Se ha creado el controlador completo `EmpresaController` con todos los métodos CRUD y las rutas correspondientes.
-
-## 📋 Endpoints Disponibles
-
-### 1. **GET /api/empresas** - Listar empresas
-**Descripción**: Obtiene una lista paginada de empresas
-
-**Query Parameters**:
-- `search` (opcional): Buscar por razón social, NIT o email
-- `activa` (opcional): Filtrar por estado (true/false)
-- `sort_by` (opcional): Campo para ordenar (default: razon_social)
-- `sort_order` (opcional): Orden (asc/desc, default: asc)
-- `per_page` (opcional): Resultados por página (default: 15)
-
-**Ejemplo**:
+## Endpoint Base
 ```
-GET /api/empresas?search=prueba&activa=true&page=1
+POST /api/empresas
+```
+
+## 🔐 Autenticación
+Requiere autenticación con token Sanctum:
+```
+Authorization: Bearer {token}
 ```
 
 ---
 
-### 2. **POST /api/empresas** - Crear empresa
-**Descripción**: Crea una nueva empresa
+## 📝 Payload Completo
 
-**Body (JSON)**:
+### ✅ Tu JSON está CASI correcto, pero hay ajustes necesarios:
+
 ```json
 {
     "nit": "900123456",
     "dv": "7",
-    "razon_social": "EMPRESA DE PRUEBA S.A.S",
-    "direccion": "CALLE 123 # 45-67",
-    "email": "contacto@empresaprueba.com",
-    "celular": "3001234567",
-    "tipo_persona_id": 2,
-    "tipo_responsabilidad_id": 1,
-    "tipo_documento_id": 6,
+    "razon_social": "Joyería El Dorado S.A.S",
+    "direccion": "Calle 50 #45-30",
     "departamento_id": 1,
     "municipio_id": 1,
+    "comuna_id": 1,
+    "barrio_id": 1,
+    "tipo_persona_id": 2,
+    "tipo_responsabilidad_id": 1,
+    "tipo_documento_id": 1,
+    "telefono_fijo": "6015551234",
+    "celular": "3001234567",
+    "email": "contacto@eldorado.com",
+    "pagina_web": "https://www.eldorado.com",
+    "software_id": "SW123456",
+    "software_pin": "PIN987654",
+    "representante_legal": "Juan Pérez García",
+    "cedula_representante": "1234567890",
+    "email_representante": "juan.perez@eldorado.com",
+    "direccion_representante": "Calle 60 #50-20",
+    "certificate_password": "password123",
     "activa": true
 }
 ```
 
-**Campos opcionales**:
-- `telefono_fijo`
-- `pagina_web`
-- `comuna_id`
-- `barrio_id`
-- `representante_legal`
-- `cedula_representante`
-- `email_representante`
-- `direccion_representante`
-- `software_id`
-- `software_pin`
-- `certificate_password`
-- `logo` (archivo de imagen)
-- `certificate_path` (archivo .p12 o .pfx)
+---
+
+## ⚠️ Diferencias con tu JSON Original
+
+### 1. **Archivos (logo y certificate)**
+❌ **NO se envían en JSON**, se envían como **multipart/form-data**
+
+**Correcto:**
+```javascript
+// Usando FormData en JavaScript
+const formData = new FormData();
+formData.append('nit', '900123456');
+formData.append('dv', '7');
+// ... otros campos ...
+formData.append('logo', fileInputLogo.files[0]); // Archivo real
+formData.append('certificate_path', fileInputCert.files[0]); // Archivo real
+```
+
+**Validaciones de archivos:**
+- **logo**: 
+  - Formatos: jpeg, png, jpg, gif
+  - Tamaño máximo: 2MB (2048KB)
+  - Campo: `logo` (no "FILE_OBJECT")
+  
+- **certificate** (Certificado digital):
+  - Formatos: p12, pfx
+  - Tamaño máximo: 5MB (5120KB)
+  - Campo: `certificate_path` (no "certificate")
+
+### 2. **Redes Sociales**
+❌ **NO se manejan en el controlador actual**
+
+El modelo `Empresa` tiene la relación `redesSociales()`, pero el controlador **NO procesa** el array `redes_sociales` en el método `store()`.
+
+**Opciones:**
+1. **Crear las redes sociales después** de crear la empresa
+2. **Modificar el controlador** para aceptar redes sociales en el payload
+
+### 3. **Campo `activa`**
+✅ Opcional, por defecto es `true` (boolean)
 
 ---
 
-### 3. **GET /api/empresas/{id}** - Ver detalle de empresa
-**Descripción**: Obtiene los detalles completos de una empresa
+## 📋 Validaciones Completas
 
-**Ejemplo**:
-```
-GET /api/empresas/1
-```
+### Campos Requeridos
+| Campo | Tipo | Validación |
+|-------|------|------------|
+| `nit` | string | Requerido, máx 20 caracteres, único |
+| `dv` | string | Requerido, 1 carácter |
+| `razon_social` | string | Requerido, máx 255 caracteres |
+| `direccion` | string | Requerido, máx 255 caracteres |
+| `email` | string | Requerido, email válido, máx 255 |
+| `tipo_persona_id` | integer | Requerido, debe existir en `tipo_personas` |
+| `tipo_responsabilidad_id` | integer | Requerido, debe existir en `tipo_responsabilidades` |
+| `tipo_documento_id` | integer | Requerido, debe existir en `tipo_documentos` |
 
-**Respuesta incluye**:
-- Datos de la empresa
-- Relaciones: departamento, municipio, comuna, barrio
-- Tipos: persona, responsabilidad, documento
-- Usuarios asociados y administradores
+### Campos Opcionales
+| Campo | Tipo | Validación |
+|-------|------|------------|
+| `telefono_fijo` | string | Opcional, máx 20 caracteres |
+| `celular` | string | Opcional, máx 20 caracteres |
+| `pagina_web` | string | Opcional, URL válida, máx 255 |
+| `departamento_id` | integer | Opcional, debe existir en `departamentos` |
+| `municipio_id` | integer | Opcional, debe existir en `municipios` |
+| `comuna_id` | integer | Opcional, debe existir en `comunas` |
+| `barrio_id` | integer | Opcional, debe existir en `barrios` |
+| `representante_legal` | string | Opcional, máx 255 caracteres |
+| `cedula_representante` | string | Opcional, máx 20 caracteres |
+| `email_representante` | string | Opcional, email válido, máx 255 |
+| `direccion_representante` | string | Opcional, máx 255 caracteres |
+| `software_id` | string | Opcional, máx 255 caracteres |
+| `software_pin` | string | Opcional, máx 255 caracteres |
+| `certificate_password` | string | Opcional, máx 255 caracteres |
+| `logo` | file | Opcional, imagen (jpeg/png/jpg/gif), máx 2MB |
+| `certificate_path` | file | Opcional, certificado (p12/pfx), máx 5MB |
+| `activa` | boolean | Opcional, por defecto `true` |
 
 ---
 
-### 4. **PUT/PATCH /api/empresas/{id}** - Actualizar empresa
-**Descripción**: Actualiza los datos de una empresa existente
+## 🔄 Endpoints Disponibles
 
-**Body (JSON)** - Todos los campos son opcionales:
+### 1. Listar Empresas
+```http
+GET /api/empresas
+```
+
+**Query Parameters:**
+- `search`: Buscar por razón social, NIT o email
+- `activa`: Filtrar por estado (true/false)
+- `sort_by`: Campo para ordenar (default: razon_social)
+- `sort_order`: Orden (asc/desc, default: asc)
+- `per_page`: Registros por página (default: 15)
+
+**Respuesta:**
 ```json
 {
-    "razon_social": "EMPRESA ACTUALIZADA S.A.S",
-    "direccion": "NUEVA DIRECCIÓN",
-    "email": "nuevo@email.com",
-    "activa": true
+    "data": [
+        {
+            "id": 1,
+            "nit": "900123456",
+            "dv": "7",
+            "razon_social": "Joyería El Dorado S.A.S",
+            "nit_completo": "900123456-7",
+            "departamento": {...},
+            "municipio": {...},
+            "tipo_persona": {...},
+            "tipo_responsabilidad": {...}
+        }
+    ],
+    "current_page": 1,
+    "total": 10,
+    "per_page": 15
 }
 ```
 
-**Ejemplo**:
-```
-PUT /api/empresas/1
-```
-
----
-
-### 5. **DELETE /api/empresas/{id}** - Eliminar empresa
-**Descripción**: Elimina una empresa (soft delete)
-
-**Permisos**: Solo administradores globales
-
-**Ejemplo**:
-```
-DELETE /api/empresas/1
+### 2. Crear Empresa
+```http
+POST /api/empresas
+Content-Type: multipart/form-data
 ```
 
+**Respuesta exitosa (201):**
+```json
+{
+    "message": "Empresa creada exitosamente",
+    "empresa": {
+        "id": 1,
+        "nit": "900123456",
+        "dv": "7",
+        "razon_social": "Joyería El Dorado S.A.S",
+        "logo": "empresas/logos/abc123.jpg",
+        "certificate_path": "empresas/certificates/cert123.p12",
+        "departamento": {...},
+        "municipio": {...},
+        "tipo_persona": {...},
+        "tipo_responsabilidad": {...}
+    }
+}
+```
+
+### 3. Ver Empresa
+```http
+GET /api/empresas/{id}
+```
+
+**Respuesta:**
+```json
+{
+    "id": 1,
+    "nit": "900123456",
+    "dv": "7",
+    "razon_social": "Joyería El Dorado S.A.S",
+    "direccion_completa": "Calle 50 #45-30, Barrio Centro, Comuna 1, Medellín, Antioquia",
+    "departamento": {...},
+    "municipio": {...},
+    "comuna": {...},
+    "barrio": {...},
+    "tipo_persona": {...},
+    "tipo_responsabilidad": {...},
+    "tipo_documento": {...},
+    "usuarios": [...],
+    "administradores": [...]
+}
+```
+
+### 4. Actualizar Empresa
+```http
+PUT /api/empresas/{id}
+Content-Type: multipart/form-data
+```
+
+**Nota:** Solo administradores de la empresa o admin global pueden actualizar.
+
+### 5. Eliminar Empresa (Soft Delete)
+```http
+DELETE /api/empresas/{id}
+```
+
+**Nota:** Solo admin global puede eliminar empresas.
+
 ---
 
-## 🔐 Permisos y Seguridad
+## 🔗 Catálogos Necesarios
 
-### Listar empresas (index):
-- **Admin global**: Ve todas las empresas
-- **Usuario normal**: Solo ve las empresas a las que pertenece
+**✅ Todos los endpoints de catálogos están implementados:**
 
-### Ver detalle (show):
-- **Admin global**: Puede ver cualquier empresa
-- **Usuario normal**: Solo puede ver empresas a las que pertenece
+### 1. Tipos de Persona
+```http
+GET /api/tipos-persona
+```
+**Respuesta:** `[{id, nombre, codigo}]`
 
-### Crear (store):
-- Cualquier usuario autenticado puede crear empresas
-- El usuario que crea la empresa se asocia automáticamente como administrador (si no es admin global)
+### 2. Tipos de Responsabilidad
+```http
+GET /api/tipos-responsabilidad
+```
+**Respuesta:** `[{id, nombre, codigo}]`
 
-### Actualizar (update):
-- **Admin global**: Puede actualizar cualquier empresa
-- **Administrador de empresa**: Solo puede actualizar las empresas que administra
+### 3. Tipos de Documento
+```http
+GET /api/tipos-documento
+```
+**Respuesta:** `[{id, nombre, codigo}]`
 
-### Eliminar (destroy):
-- **Solo admin global** puede eliminar empresas
+### 4. Departamentos
+```http
+GET /api/departamentos
+```
+**Respuesta:** `[{id, name, code}]`
 
----
-
-## 📁 Manejo de Archivos
-
-### Logo de la empresa:
-- **Campo**: `logo`
-- **Tipo**: Imagen (jpeg, png, jpg, gif)
-- **Tamaño máximo**: 2MB
-- **Almacenamiento**: `storage/app/public/empresas/logos/`
-
-### Certificado digital:
-- **Campo**: `certificate_path`
-- **Tipo**: Archivo .p12 o .pfx
-- **Tamaño máximo**: 5MB
-- **Almacenamiento**: `storage/app/empresas/certificates/` (privado)
-
-**Nota**: Al actualizar logo o certificado, el archivo anterior se elimina automáticamente.
+### 5. Ubicación Jerárquica
+```http
+GET /api/departamentos/{id}/municipios
+GET /api/municipios/{id}/comunas
+GET /api/comunas/{id}/barrios
+```
 
 ---
 
-## ✨ Características Implementadas
+## 📤 Ejemplo Completo con cURL
 
-1. ✅ **Validación completa** de todos los campos
-2. ✅ **Control de permisos** basado en roles
-3. ✅ **Paginación** en el listado
-4. ✅ **Búsqueda** por múltiples campos
-5. ✅ **Filtros** por estado activo/inactivo
-6. ✅ **Ordenamiento** personalizable
-7. ✅ **Soft deletes** (eliminación lógica)
-8. ✅ **Manejo de archivos** (logo y certificado)
-9. ✅ **Logging** de errores
-10. ✅ **Try-catch** en todos los métodos
-11. ✅ **Relaciones eager loading** para optimizar consultas
-12. ✅ **Asociación automática** de usuario creador
-
----
-
-## 🧪 Ejemplos de Uso con cURL
-
-### Crear empresa:
+### Sin archivos (JSON)
 ```bash
-curl -X POST http://localhost:8000/api/empresas \
+curl -X POST https://api.example.com/api/empresas \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "nit": "900123456",
     "dv": "7",
-    "razon_social": "MI EMPRESA S.A.S",
-    "direccion": "CALLE 1 # 2-3",
-    "email": "contacto@miempresa.com",
-    "celular": "3001234567",
+    "razon_social": "Joyería El Dorado S.A.S",
+    "direccion": "Calle 50 #45-30",
+    "departamento_id": 1,
+    "municipio_id": 1,
     "tipo_persona_id": 2,
     "tipo_responsabilidad_id": 1,
-    "tipo_documento_id": 6
+    "tipo_documento_id": 1,
+    "email": "contacto@eldorado.com",
+    "celular": "3001234567"
   }'
 ```
 
-### Listar empresas:
+### Con archivos (multipart/form-data)
 ```bash
-curl -X GET "http://localhost:8000/api/empresas?search=empresa&page=1" \
-  -H "Authorization: Bearer YOUR_TOKEN"
-```
-
-### Actualizar empresa:
-```bash
-curl -X PUT http://localhost:8000/api/empresas/1 \
+curl -X POST https://api.example.com/api/empresas \
   -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "razon_social": "EMPRESA ACTUALIZADA",
-    "activa": true
-  }'
+  -F "nit=900123456" \
+  -F "dv=7" \
+  -F "razon_social=Joyería El Dorado S.A.S" \
+  -F "direccion=Calle 50 #45-30" \
+  -F "email=contacto@eldorado.com" \
+  -F "tipo_persona_id=2" \
+  -F "tipo_responsabilidad_id=1" \
+  -F "tipo_documento_id=1" \
+  -F "logo=@/path/to/logo.png" \
+  -F "certificate_path=@/path/to/certificate.p12" \
+  -F "certificate_password=password123"
 ```
 
 ---
 
-## 📝 Notas Importantes
+## 🔒 Seguridad
 
-1. **NIT único**: El NIT debe ser único en el sistema
-2. **Relaciones opcionales**: Las ubicaciones (departamento, municipio, etc.) son opcionales
-3. **Certificado sensible**: El `certificate_password` nunca se retorna en las respuestas
-4. **Multi-tenancy**: El sistema soporta múltiples empresas por usuario
-5. **Activación**: Las empresas pueden estar activas o inactivas
+### Campos Ocultos en Respuestas
+El campo `certificate_password` **NUNCA** se devuelve en las respuestas JSON por seguridad.
+
+### Almacenamiento de Archivos
+- **Logo**: Se guarda en `storage/app/public/empresas/logos/`
+- **Certificado**: Se guarda en `storage/app/empresas/certificates/` (privado)
+
+### Permisos
+- **Crear**: Cualquier usuario autenticado
+- **Ver**: Usuario debe pertenecer a la empresa o ser admin global
+- **Actualizar**: Administrador de la empresa o admin global
+- **Eliminar**: Solo admin global
 
 ---
 
-## 🔄 Próximos Pasos
+## 🚨 Errores Comunes
 
-Ahora que el CRUD de Empresas está completo, puedes:
-1. Ejecutar los seeders para crear datos de prueba
-2. Implementar el CRUD de Clientes
-3. Probar la creación de facturas con los datos completos
+### Error 422: Validación
+```json
+{
+    "message": "Error de validación",
+    "errors": {
+        "nit": ["El campo nit ya ha sido registrado."],
+        "email": ["El campo email debe ser una dirección de correo válida."]
+    }
+}
+```
+
+### Error 403: Sin permisos
+```json
+{
+    "message": "No tiene permisos para ver esta empresa"
+}
+```
+
+### Error 404: No encontrada
+```json
+{
+    "message": "Empresa no encontrada"
+}
+```
+
+---
+
+## 💡 Notas Importantes
+
+1. **Asociación automática**: Al crear una empresa, si el usuario NO es admin global, se asocia automáticamente como administrador de la empresa.
+
+2. **Redes Sociales**: Actualmente NO se procesan en el controlador. Necesitas:
+   - Crear la empresa primero
+   - Luego asociar redes sociales mediante otro endpoint (si existe)
+   - O modificar el controlador para aceptar `redes_sociales` en el payload
+
+3. **Accessors disponibles**:
+   - `nit_completo`: Retorna "NIT-DV" (ej: "900123456-7")
+   - `direccion_completa`: Retorna dirección con ubicación completa
+   - `nombre`: Alias de `razon_social`
+
+4. **Soft Delete**: Las empresas eliminadas se marcan como eliminadas pero no se borran físicamente de la BD.
+
+---
+
+## 🔧 Modificación Sugerida para Redes Sociales
+
+Si quieres manejar redes sociales en el mismo payload, necesitas modificar el controlador:
+
+```php
+// En EmpresaController@store, después de crear la empresa (línea 120):
+
+// Guardar redes sociales si se proporcionan
+if ($request->has('redes_sociales') && is_array($request->redes_sociales)) {
+    foreach ($request->redes_sociales as $redSocial) {
+        $empresa->redesSociales()->attach($redSocial['red_social_id'], [
+            'usuario_red_social' => $redSocial['usuario']
+        ]);
+    }
+}
+```
+
+Y agregar validación:
+```php
+'redes_sociales' => 'nullable|array',
+'redes_sociales.*.red_social_id' => 'required|exists:redes_sociales,id',
+'redes_sociales.*.usuario' => 'required|string|max:255',
+```
