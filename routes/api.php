@@ -45,39 +45,83 @@ Route::post('login', [AuthController::class, 'login']);
 // ========================================
 // Catálogos Públicos (Sin autenticación)
 // ========================================
-// Estos endpoints son públicos porque son datos de solo lectura no sensibles
+// Endpoints estandarizados con soporte para singular y plural
 
 // Catálogos para Productos
 Route::get('/tipos-producto', function () {
+    return response()->json(TipoProducto::orderBy('nombre')->get(['id', 'nombre']));
+});
+Route::get('/tipo-productos', function () {
     return response()->json(TipoProducto::orderBy('nombre')->get(['id', 'nombre']));
 });
 
 Route::get('/tipos-oro', function () {
     return response()->json(TipoOro::orderBy('nombre')->get(['id', 'nombre']));
 });
+Route::get('/tipo-oros', function () {
+    return response()->json(TipoOro::orderBy('nombre')->get(['id', 'nombre']));
+});
 
 Route::get('/tipos-medida', function () {
+    return response()->json(TipoMedida::orderBy('nombre')->get(['id', 'nombre', 'abreviatura']));
+});
+Route::get('/tipo-medidas', function () {
     return response()->json(TipoMedida::orderBy('nombre')->get(['id', 'nombre', 'abreviatura']));
 });
 
 // Catálogos para Empresas y Clientes
 Route::get('/tipos-persona', function () {
-    return response()->json(\App\Models\TipoPersona::orderBy('name')->get(['id', 'name', 'code']));
+    return response()->json(TipoPersona::orderBy('name')->get(['id', 'name', 'code']));
+});
+Route::get('/tipo-personas', function () {
+    return response()->json(TipoPersona::orderBy('name')->get(['id', 'name', 'code']));
 });
 
 Route::get('/tipos-responsabilidad', function () {
-    return response()->json(\App\Models\TipoResponsabilidad::orderBy('name')->get(['id', 'name', 'code']));
+    return response()->json(TipoResponsabilidad::orderBy('name')->get(['id', 'name', 'code']));
+});
+Route::get('/tipo-responsabilidades', function () {
+    return response()->json(TipoResponsabilidad::orderBy('name')->get(['id', 'name', 'code']));
 });
 
 Route::get('/tipos-documento', function () {
-    return response()->json(\App\Models\TipoDocumento::orderBy('name')->get(['id', 'name', 'code']));
+    return response()->json(TipoDocumento::orderBy('name')->get(['id', 'name', 'code']));
+});
+Route::get('/tipo-documentos', function () {
+    return response()->json(TipoDocumento::orderBy('name')->get(['id', 'name', 'code']));
 });
 
 // Catálogos de Ubicación
 Route::get('/departamentos', function () {
-    return response()->json(\App\Models\Departamento::orderBy('name')->get(['id', 'name', 'code']));
+    return response()->json(Departamento::orderBy('name')->get(['id', 'name', 'code']));
 });
 
+Route::get('/municipios', function () {
+    $departamentoId = request('departamento_id');
+    return response()->json(\App\Models\Municipio::when($departamentoId, function($query, $departamentoId) {
+        return $query->where('departamento_id', $departamentoId);
+    })->orderBy('name')->get(['id', 'name', 'code', 'departamento_id']));
+});
+
+Route::get('/comunas', function () {
+    $municipioId = request('municipio_id');
+    return response()->json(\App\Models\Comuna::when($municipioId, function($query, $municipioId) {
+        return $query->where('municipio_id', $municipioId);
+    })->orderBy('name')->get(['id', 'name', 'municipio_id']));
+});
+
+Route::get('/barrios', function () {
+    $comunaId = request('comuna_id');
+    return response()->json(\App\Models\Barrio::when($comunaId, function($query, $comunaId) {
+        return $query->where('comuna_id', $comunaId);
+    })->orderBy('name')->get(['id', 'name', 'comuna_id']));
+});
+
+Route::get('/redes-sociales', function () {
+    return response()->json(\App\Models\RedSocial::orderBy('nombre')->get(['id', 'nombre', 'icono']));
+});
+
+// Rutas específicas de ubicación (mantener compatibilidad)
 Route::get('/departamentos/{departamento}/municipios', [UbicacionController::class, 'municipios']);
 Route::get('/municipios/{municipio}/comunas', [UbicacionController::class, 'comunas']);
 Route::get('/comunas/{comuna}/barrios', [UbicacionController::class, 'barrios']);
