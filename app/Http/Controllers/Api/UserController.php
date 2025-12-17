@@ -37,7 +37,7 @@ class UserController extends BaseController
             $users = User::with('roles')->latest()->paginate(10);
             return $this->sendResponse($users, 'Users retrieved successfully.');
         } catch (\Throwable $e) {
-            return $this->sendError('Server Error.', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()], 500);
+            throw $e;
         }
     }
 
@@ -72,9 +72,9 @@ class UserController extends BaseController
 
             return $this->sendResponse(new UserResource($user), 'User created successfully.');
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            return $this->sendError('Error creating user.', ['error' => $e->getMessage()], 500);
+            throw $e;
         }
     }
 
@@ -132,9 +132,9 @@ class UserController extends BaseController
 
             return $this->sendResponse(new UserResource($user), 'User updated successfully.');
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            return $this->sendError('Error updating user.', ['error' => $e->getMessage()], 500);
+            throw $e;
         }
     }
 

@@ -55,10 +55,7 @@ class EmpresaController extends Controller
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            return response()->json([
-                'message' => 'Error al listar empresas',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -138,10 +135,7 @@ class EmpresaController extends Controller
                 'trace' => $e->getTraceAsString(),
                 'request' => $request->except(['certificate_password'])
             ]);
-            return response()->json([
-                'message' => 'Error al crear la empresa',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -183,10 +177,7 @@ class EmpresaController extends Controller
                 'message' => $e->getMessage(),
                 'empresa_id' => $id
             ]);
-            return response()->json([
-                'message' => 'Error al obtener la empresa',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -281,10 +272,7 @@ class EmpresaController extends Controller
                 'trace' => $e->getTraceAsString(),
                 'empresa_id' => $id
             ]);
-            return response()->json([
-                'message' => 'Error al actualizar la empresa',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -321,10 +309,7 @@ class EmpresaController extends Controller
                 'message' => $e->getMessage(),
                 'empresa_id' => $id
             ]);
-            return response()->json([
-                'message' => 'Error al eliminar la empresa',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 }

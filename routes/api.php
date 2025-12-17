@@ -146,20 +146,13 @@ Route::get('/resoluciones', function() {
       });
 });
 
-// ENDPOINT DE PRUEBA - Crear empresa SIN autenticación (TEMPORAL)
-Route::post('/test/crear-empresa', function(Request $request) {
-    try {
+// ENDPOINT DE PRUEBA - Crear empresa SIN autenticación (SOLO LOCAL)
+if (app()->isLocal()) {
+    Route::post('/test/crear-empresa', function(Request $request) {
         $empresaController = new \App\Http\Controllers\Api\EmpresaController();
         return $empresaController->store($request);
-    } catch (\Exception $e) {
-        return response()->json([
-            'error' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => $e->getTraceAsString()
-        ], 500);
-    }
-});
+    });
+}
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -167,17 +160,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Auth Management
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('/user', function (Request $request) {
-        try {
-            $user = $request->user();
-            return response()->json($user);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => explode("\n", $e->getTraceAsString())
-            ], 500);
-        }
+        return response()->json($request->user());
     });
 
     // Endpoint de prueba simple

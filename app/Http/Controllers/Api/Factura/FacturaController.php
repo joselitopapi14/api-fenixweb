@@ -152,10 +152,7 @@ class FacturaController extends Controller
                 'trace' => $e->getTraceAsString(),
                 'request' => $request->all()
             ]);
-            return response()->json([
-                'message' => 'Error al crear la factura',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -195,12 +192,14 @@ class FacturaController extends Controller
     private function validateTaxesProducts(Request $request)
     {
         // Verificar que productos existen y pertenecen a la empresa
-        foreach ($request->productos as $producto) {
+        foreach ($request->productos as $index => $producto) {
             $prod = Producto::where('id', $producto['id'])
                 ->where('empresa_id', $request->empresa_id)
                 ->first();
             if (!$prod) {
-                throw new \Exception("Producto {$producto['id']} no encontrado o no pertenece a la empresa");
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    "productos.{$index}.id" => ["Producto {$producto['id']} no encontrado o no pertenece a la empresa"],
+                ]);
             }
         }
     }
@@ -266,7 +265,9 @@ class FacturaController extends Controller
     private function validateBusinessRules(Request $request, $amounts)
     {
         if ($request->has('valor_recibido') && $request->valor_recibido < $amounts['total']) {
-            throw new \Exception("Valor recibido es menor al total de la factura");
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'valor_recibido' => ['Valor recibido es menor al total de la factura'],
+            ]);
         }
     }
 

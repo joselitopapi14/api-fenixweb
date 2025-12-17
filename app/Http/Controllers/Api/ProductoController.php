@@ -187,10 +187,9 @@ class ProductoController extends Controller
                 'data' => new ProductoResource($producto->load(['tipoProducto', 'tipoOro', 'tipoMedida', 'empresa', 'impuestos']))
             ], 201);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            Log::error('Error creando producto API: ' . $e->getMessage());
-            return response()->json(['message' => 'Error interno del servidor'], 500);
+            throw $e;
         }
     }
 
@@ -270,10 +269,9 @@ class ProductoController extends Controller
                 'data' => new ProductoResource($producto->fresh()->load(['tipoProducto', 'tipoOro', 'tipoMedida', 'empresa', 'impuestos']))
             ], 200);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            Log::error('Error actualizando producto API: ' . $e->getMessage());
-            return response()->json(['message' => 'Error interno del servidor'], 500);
+            throw $e;
         }
     }
 
@@ -293,15 +291,8 @@ class ProductoController extends Controller
         try {
             $producto->delete();
             return response()->json(['message' => 'Producto eliminado exitosamente'], 200);
-        } catch (\Exception $e) {
-             // Si hay restricción de integridad
-             if (str_contains($e->getMessage(), 'Constraint violation') || str_contains($e->getMessage(), 'Foreign key violation')) {
-                return response()->json([
-                    'message' => 'No se puede eliminar el producto porque tiene registros asociados',
-                    // details...
-                ], 409);
-             }
-             return response()->json(['message' => 'Error al eliminar producto'], 500);
+        } catch (\Throwable $e) {
+            throw $e;
         }
     }
 

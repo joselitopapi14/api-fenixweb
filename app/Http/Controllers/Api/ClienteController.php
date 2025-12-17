@@ -94,10 +94,7 @@ class ClienteController extends Controller
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            return response()->json([
-                'message' => 'Error al listar clientes',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -185,10 +182,7 @@ class ClienteController extends Controller
                 'trace' => $e->getTraceAsString(),
                 'request' => $request->all()
             ]);
-            return response()->json([
-                'message' => 'Error al crear el cliente',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -230,10 +224,7 @@ class ClienteController extends Controller
                 'message' => $e->getMessage(),
                 'cliente_id' => $id
             ]);
-            return response()->json([
-                'message' => 'Error al obtener el cliente',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -335,10 +326,7 @@ class ClienteController extends Controller
                 'trace' => $e->getTraceAsString(),
                 'cliente_id' => $id
             ]);
-            return response()->json([
-                'message' => 'Error al actualizar el cliente',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -375,10 +363,7 @@ class ClienteController extends Controller
                 'message' => $e->getMessage(),
                 'cliente_id' => $id
             ]);
-            return response()->json([
-                'message' => 'Error al eliminar el cliente',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 }

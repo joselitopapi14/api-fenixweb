@@ -284,7 +284,7 @@ class ResolucionFacturacionController extends Controller
             $secretKey = env('CLAVE_SECRETA');
 
             if (!$secretKey) {
-                return response()->json(['message' => 'Clave secreta no configurada en el sistema'], 500);
+                abort(500, 'Clave secreta no configurada en el sistema');
             }
 
             // Generar headers
@@ -372,7 +372,7 @@ class ResolucionFacturacionController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Error sync DIAN API: ' . $e->getMessage());
-            return response()->json(['message' => 'Error interno: ' . $e->getMessage()], 500);
+            throw $e;
         }
     }
 

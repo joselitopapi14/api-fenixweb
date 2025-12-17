@@ -104,9 +104,8 @@ class ProductoImportController extends Controller
                 'filas_con_errores' => 0 // Estimado
             ]);
 
-        } catch (Exception $e) {
-            Log::error('Error previsualizando importación: ' . $e->getMessage());
-            return response()->json(['message' => 'Error al leer el archivo', 'error' => $e->getMessage()], 500);
+        } catch (\Throwable $e) {
+            throw $e;
         }
     }
 
@@ -177,10 +176,9 @@ class ProductoImportController extends Controller
                 'historial_id' => $history->id
             ], 200);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            Log::error('Error importando productos API: ' . $e->getMessage());
-            return response()->json(['message' => 'Error al procesar la importación', 'error' => $e->getMessage()], 500);
+            throw $e;
         }
     }
 

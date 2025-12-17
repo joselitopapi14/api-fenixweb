@@ -50,9 +50,9 @@ class RoleController extends BaseController
             DB::commit();
             return $this->sendResponse($role->load('permissions'), 'Role created successfully');
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            return $this->sendError('Error creating role', ['error' => $e->getMessage()], 500);
+            throw $e;
         }
     }
 
@@ -87,9 +87,9 @@ class RoleController extends BaseController
             DB::commit();
             return $this->sendResponse($role->load('permissions'), 'Role updated successfully');
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            return $this->sendError('Error updating role', ['error' => $e->getMessage()], 500);
+            throw $e;
         }
     }
 
