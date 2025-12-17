@@ -42,29 +42,108 @@ use App\Models\Departamento;
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
-// Endpoints de prueba (SIN autenticación) - TEMPORAL para debugging
-Route::get('/test/tipos-persona', function () {
-    try {
-        return response()->json(TipoPersona::orderBy('name')->get(['id', 'name', 'code']));
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()], 500);
-    }
+// ========================================
+// Catálogos Públicos (Sin autenticación)
+// ========================================
+// Estos endpoints son públicos porque son datos de solo lectura no sensibles
+
+// Catálogos para Productos
+Route::get('/tipos-producto', function () {
+    return response()->json(TipoProducto::orderBy('nombre')->get(['id', 'nombre']));
 });
 
-Route::get('/test/tipos-responsabilidad', function () {
-    try {
-        return response()->json(\App\Models\TipoResponsabilidad::orderBy('name')->get(['id', 'name', 'code']));
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()], 500);
-    }
+Route::get('/tipos-oro', function () {
+    return response()->json(TipoOro::orderBy('nombre')->get(['id', 'nombre']));
 });
 
-Route::get('/test/tipos-documento', function () {
-    try {
-        return response()->json(\App\Models\TipoDocumento::orderBy('name')->get(['id', 'name', 'code']));
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()], 500);
-    }
+Route::get('/tipos-medida', function () {
+    return response()->json(TipoMedida::orderBy('nombre')->get(['id', 'nombre', 'abreviatura']));
+});
+
+// Catálogos para Empresas y Clientes
+Route::get('/tipos-persona', function () {
+    return response()->json(\App\Models\TipoPersona::orderBy('name')->get(['id', 'name', 'code']));
+});
+
+Route::get('/tipos-responsabilidad', function () {
+    return response()->json(\App\Models\TipoResponsabilidad::orderBy('name')->get(['id', 'name', 'code']));
+});
+
+Route::get('/tipos-documento', function () {
+    return response()->json(\App\Models\TipoDocumento::orderBy('name')->get(['id', 'name', 'code']));
+});
+
+// Catálogos de Ubicación
+Route::get('/departamentos', function () {
+    return response()->json(\App\Models\Departamento::orderBy('name')->get(['id', 'name', 'code']));
+});
+
+Route::get('/departamentos/{departamento}/municipios', [UbicacionController::class, 'municipios']);
+Route::get('/municipios/{municipio}/comunas', [UbicacionController::class, 'comunas']);
+Route::get('/comunas/{comuna}/barrios', [UbicacionController::class, 'barrios']);
+
+// Catálogos para Facturación
+Route::get('/tipos-factura', function() {
+    return TipoFactura::select('id', 'name', 'code')->get();
+});
+
+Route::get('/medios-pago', function() {
+    return MedioPago::select('id', 'name', 'code')->get();
+});
+
+Route::get('/tipos-pago', function() {
+    return TipoPago::select('id', 'name', 'code')->get();
+});
+
+Route::get('/retenciones', function() {
+    return TipoRetencion::select('id', 'name', 'code')
+        ->where('name', '!=', 'ReteRenta')
+        ->get();
+});
+
+Route::get('/impuestos', function() {
+    return Impuesto::select('id', 'name', 'code')->get();
+});
+
+Route::get('/conceptos-retencion', function() {
+    $retencionId = request('retencion_id');
+    return ConceptoRetencione::select('id', 'name', 'percentage')
+        ->when($retencionId, function($query, $retencionId) {
+            return $query->where('tipo_retencion_id', $retencionId);
+        })->get();
+});
+
+// Tipos de Movimiento (puede filtrar por empresa)
+Route::get('/tipos-movimiento', function () {
+    $empresaId = request('empresa_id');
+    return response()->json(\App\Models\TipoMovimiento::activos()
+        ->when($empresaId, function($query, $empresaId) {
+            return $query->where('empresa_id', $empresaId);
+        })
+        ->orderBy('nombre')
+        ->get(['id', 'nombre', 'es_suma', 'descripcion', 'empresa_id']));
+});
+
+// Resoluciones (puede filtrar por empresa)
+Route::get('/resoluciones', function() {
+    $empresaId = request('empresa_id');
+    return ResolucionFacturacion::when($empresaId, function($query, $empresaId) {
+        return $query->where('empresa_id', $empresaId);
+    })->where('envia_dian', true)
+      ->whereNotNull('clave_tecnica')
+      ->where('clave_tecnica', '!=', '')
+      ->select('id', 'prefijo', 'resolucion', 'consecutivo_actual', 'consecutivo_final')
+      ->get()
+      ->map(function($resolucion) {
+          return [
+              'id' => $resolucion->id,
+              'name' => $resolucion->prefijo,
+              'prefijo' => $resolucion->prefijo,
+              'resolucion' => $resolucion->resolucion,
+              'consecutivo_actual' => $resolucion->consecutivo_actual,
+              'consecutivo_final' => $resolucion->consecutivo_final
+          ];
+      });
 });
 
 // Protected Routes
@@ -107,108 +186,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Empresas - Full CRUD
     Route::apiResource('empresas', \App\Http\Controllers\Api\EmpresaController::class);
 
-    // Catalogos Generales
-    Route::get('/tipos-producto', function () {
-        return response()->json(TipoProducto::orderBy('nombre')->get(['id', 'nombre']));
-    });
-
-    Route::get('/tipos-oro', function () {
-        return response()->json(TipoOro::orderBy('nombre')->get(['id', 'nombre']));
-    });
-
-    Route::get('/tipos-medida', function () {
-        return response()->json(TipoMedida::orderBy('nombre')->get(['id', 'nombre', 'abreviatura']));
-    });
-
-    Route::get('/tipos-movimiento', function () {
-        $empresaId = request('empresa_id');
-        return response()->json(\App\Models\TipoMovimiento::activos()
-            ->when($empresaId, function($query, $empresaId) {
-                return $query->where('empresa_id', $empresaId);
-            })
-            ->orderBy('nombre')
-            ->get(['id', 'nombre', 'es_suma', 'descripcion', 'empresa_id']));
-    });
-
-    // Catálogos para Empresas
-    Route::get('/tipos-persona', function () {
-        return response()->json(\App\Models\TipoPersona::orderBy('name')->get(['id', 'name', 'code']));
-    });
-
-    Route::get('/tipos-responsabilidad', function () {
-        return response()->json(\App\Models\TipoResponsabilidad::orderBy('name')->get(['id', 'name', 'code']));
-    });
-
-    Route::get('/tipos-documento', function () {
-        return response()->json(\App\Models\TipoDocumento::orderBy('name')->get(['id', 'name', 'code']));
-    });
-
-    Route::get('/departamentos', function () {
-        return response()->json(\App\Models\Departamento::orderBy('name')->get(['id', 'name', 'code']));
-    });
-
-    // Ubicacion
-    Route::get('/departamentos/{departamento}/municipios', [UbicacionController::class, 'municipios']);
-    Route::get('/municipios/{municipio}/comunas', [UbicacionController::class, 'comunas']);
-    Route::get('/comunas/{comuna}/barrios', [UbicacionController::class, 'barrios']);
-
-    // --- Facturacion API ---
-    
     // --- Facturacion API ---
     // Standardized CRUD for Facturas
     Route::apiResource('facturas', ApiFacturaController::class);
-
-    Route::get('/tipos-factura', function() {
-        return TipoFactura::select('id', 'name', 'code')->get();
-    });
-
-    Route::get('/medios-pago', function() {
-        return MedioPago::select('id', 'name', 'code')->get();
-    });
-
-    Route::get('/tipos-pago', function() {
-        return TipoPago::select('id', 'name', 'code')->get();
-    });
-
-    Route::get('/retenciones', function() {
-        return TipoRetencion::select('id', 'name', 'code')
-            ->where('name', '!=', 'ReteRenta')
-            ->get();
-    });
-
-    Route::get('/impuestos', function() {
-        return Impuesto::select('id', 'name', 'code')->get();
-    });
-
-    Route::get('/conceptos-retencion', function() {
-        $retencionId = request('retencion_id');
-        return ConceptoRetencione::select('id', 'name', 'percentage')
-            ->when($retencionId, function($query, $retencionId) {
-                return $query->where('tipo_retencion_id', $retencionId);
-            })->get();
-    });
-
-    // Resoluciones
-    Route::get('/resoluciones', function() {
-        $empresaId = request('empresa_id');
-        return ResolucionFacturacion::when($empresaId, function($query, $empresaId) {
-            return $query->where('empresa_id', $empresaId);
-        })->where('envia_dian', true)
-          ->whereNotNull('clave_tecnica')
-          ->where('clave_tecnica', '!=', '')
-          ->select('id', 'prefijo', 'resolucion', 'consecutivo_actual', 'consecutivo_final')
-          ->get()
-          ->map(function($resolucion) {
-              return [
-                  'id' => $resolucion->id,
-                  'name' => $resolucion->prefijo,
-                  'prefijo' => $resolucion->prefijo,
-                  'resolucion' => $resolucion->resolucion,
-                  'consecutivo_actual' => $resolucion->consecutivo_actual,
-                  'consecutivo_final' => $resolucion->consecutivo_final
-              ];
-          });
-    });
 
     // Clientes - Full CRUD
     Route::apiResource('clientes', \App\Http\Controllers\Api\ClienteController::class);
