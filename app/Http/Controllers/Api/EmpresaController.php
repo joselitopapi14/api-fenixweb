@@ -121,7 +121,7 @@ class EmpresaController extends Controller
 
             // Si el usuario actual no es admin global, asociarlo como administrador de la empresa
             $user = auth()->user();
-            if (!$user->esAdministradorGlobal()) {
+            if ($user && !$user->esAdministradorGlobal()) {
                 $empresa->usuarios()->attach($user->id, [
                     'es_administrador' => true,
                     'activo' => true
